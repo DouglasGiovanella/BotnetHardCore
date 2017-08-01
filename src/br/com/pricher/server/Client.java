@@ -30,7 +30,7 @@ public class Client {
         InetAddress ipAddress = InetAddress.getLocalHost();
 
         bfw.write(ipAddress.getHostAddress() + "\r\n");
-        enviarMensagem("Computer IP: " + ipAddress.getHostAddress() + " Connected");
+        //enviarMensagem("Computer IP: " + ipAddress.getHostAddress() + " Connected");
         bfw.flush();
     }
 
