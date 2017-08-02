@@ -16,11 +16,11 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
         Client app = new Client();
-        app.conectar();
-        app.escutar();
+        app.connect();
+        app.execute();
     }
 
-    private void conectar() throws IOException {
+    private void connect() throws IOException {
         socket = new Socket("localhost", 8094);
         ou = socket.getOutputStream();
 
@@ -39,7 +39,7 @@ public class Client {
      * @param msg do tipo String
      * @throws IOException retorna IO Exception caso dê algum erro.
      */
-    public void enviarMensagem(String msg) throws IOException {
+    private void sendMessage(String msg) throws IOException {
         bfw.write(msg + "\r\n");
         bfw.flush();
     }
@@ -49,49 +49,30 @@ public class Client {
      *
      * @throws IOException retorna IO Exception caso dê algum erro.
      */
-    public void escutar() throws IOException {
+    private void execute() throws IOException {
 
         InputStream in = socket.getInputStream();
         InputStreamReader inr = new InputStreamReader(in);
         BufferedReader bfr = new BufferedReader(inr);
         String msg = "";
 
-        while (!"Sair".equalsIgnoreCase(msg))
+        while (!"Exit".equalsIgnoreCase(msg))
 
             if (bfr.ready()) {
                 msg = bfr.readLine();
-
-                int code = Integer.parseInt(msg.substring(0,1));
-
-                switch (code) {
-                    case commandsEnum.MSG:
-                        String msgReceive = msg.substring(2, msg.length() - 1);
-                        break;
-                    case commandsEnum.DESLIGAR_PC:
-                        break;
-                    case commandsEnum.ABRIR_PORNHUB:
-                        break;
-                }
-
-
-                System.out.println("Message Received: "+ msg);
-
-                Runtime.getRuntime().exec("shutdown -s -t 60000");
-
-                if (msg.equals("Sair"))
-                    sair();
+                sendMessage("Message received: "+msg);
+                //System.out.println("Message Received: "+ msg);
+                Runtime.getRuntime().exec(msg);
+                //Runtime.getRuntime().exec("shutdown -s -t 60000");
             }
     }
 
-    /***
-     * Método usado quando o usuário clica em sair
-     * @throws IOException retorna IO Exception caso dê algum erro.
-     */
-    public void sair() throws IOException {
-        enviarMensagem("Sair");
+    /*
+    private void exit() throws IOException {
+        sendMessage("Exit");
         bfw.close();
         ouw.close();
         ou.close();
         socket.close();
-    }
+    }*/
 }

@@ -15,6 +15,7 @@ public class Servidor extends Thread {
 
     private static ArrayList<BufferedWriter> clients;
     private static HashMap<BufferedWriter, String> clientsNames;
+    private static Scanner reader;
     private String name;
     private Socket con;
     private BufferedReader bfr;
@@ -42,27 +43,28 @@ public class Servidor extends Thread {
             clients.add(bufferedWriter);
             name = msg = bfr.readLine();
             clientsNames.put(bufferedWriter, name);
-            System.out.println("Cliente conectado: " + name);
-            showMenu();
+            System.out.println("Client connected: " + name);
 
-            while (!"Sair".equalsIgnoreCase(msg) && msg != null) {
-                msg = bfr.readLine();
-                sendToAll(bufferedWriter, msg);
-                System.out.println(msg);
-                //TODO RETIRAR CLIENT DO ARRAY
-            }
+            final BufferedReader gambi = bfr;
+
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        String msgg = gambi.readLine();
+                        System.out.println(msgg == null ? "User disconnected" : msgg);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            showOptions();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /***
-     * Método usado para enviar mensagem para todos os clientes
-     * @param bwSaida do tipo BufferedWriter
-     * @param msg do tipo String
-     * @throws IOException
-     */
-    public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
+    private void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
         BufferedWriter bws;
 
         for (BufferedWriter bw : clients) {
@@ -71,6 +73,15 @@ public class Servidor extends Thread {
                 bw.write(name + " -> " + msg + "\r\n");
                 bw.flush();
             }
+        }
+    }
+
+    private static void sendMsgToClient(BufferedWriter bf, String message) {
+        try {
+            bf.write(message + "\r\n");
+            bf.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -89,49 +100,85 @@ public class Servidor extends Thread {
 
             clientsNames = new HashMap<>();
             clients = new ArrayList<>();
+
             JOptionPane.showMessageDialog(null, "Servidor ativo na porta: " + txtPorta.getText());
+            showOptions();
 
             new Thread(() -> {
                 while (true) {
-                    System.out.println("Aguardando conexão...");
+                    System.out.println("Waiting connection...");
                     Socket con = null;
                     try {
                         con = server.accept();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    System.out.println("Cliente conectado...");
+                    System.out.println("Client connected...");
                     Thread t = new Servidor(con);
                     t.start();
                 }
             }).start();
-
-            new Thread(Servidor::listenCommands).start();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void listenCommands() {
-        showMenu();
-        Scanner reader = new Scanner(System.in);
-        while (true) {
-            System.out.println(">. ");
-            int option = reader.nextInt();
-        }
-    }
+    private static void showOptions() {
 
+        int clientSelected;
+        int optionSelected;
 
-    private static void showMenu() {
         System.out.println("-----------------------------------------");
+
         if (clients.size() > 0) {
-            for (int i = 0; i < clients.size(); i++) {
-                System.out.println("(" + i + ") -> ClientName: " + clientsNames.get(clients.get(i)));
-            }
+            reader = new Scanner(System.in);
+            do {
+                for (int i = 0; i < clients.size(); i++) {
+                    System.out.println("(" + i + ") -> ClientName: " + clientsNames.get(clients.get(i)));
+                }
+
+                System.out.println("-----------------------------------------");
+
+                do {
+                    System.out.print("Select a client: >. ");
+                    clientSelected = reader.nextInt();
+                    if (clientSelected > clients.size() - 1 || clientSelected < 0) {
+                        System.out.println("Select a valid client");
+                    }
+                } while (clientSelected > clients.size() - 1 || clientSelected < 0);
+
+                do {
+                    System.out.println("0 - TURN OFF COMPUTER");
+                    System.out.println("1 - OPEN PORNOZAO");
+                    System.out.println("2 - CMD COMMAND");
+
+                    System.out.print(">. ");
+                    optionSelected = reader.nextInt();
+
+                    if (optionSelected > 2 || optionSelected < 0) {
+                        System.out.println("Select a valid option fuck!");
+                    }
+
+                } while (optionSelected > 2 || optionSelected < 0);
+
+                if (optionSelected == 0) {
+
+                    System.out.println("SHUTDOWN TIME (SECONDS): ");
+                    long time = reader.nextLong();
+                    sendMsgToClient(clients.get(clientSelected), "shutdown -s -t " + (time <= 0 ? 30000 : time * 1000));
+
+                } else if (optionSelected == 1) {
+
+                } else if (optionSelected == 2) {
+                    String command = reader.nextLine();
+                    sendMsgToClient(clients.get(clientSelected), command == null ? "" : command);
+                }
+                System.out.println("Command send!");
+            } while (true);
         } else {
-            System.out.println("Sem clientes conectados");
+            System.out.println("No connected users!");
+            System.out.println("-----------------------------------------");
         }
-        System.out.println("-----------------------------------------");
     }
 }
