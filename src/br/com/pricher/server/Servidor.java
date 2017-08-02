@@ -1,6 +1,7 @@
 package br.com.pricher.server;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -43,6 +44,13 @@ public class Servidor extends Thread {
             name = bfr.readLine();
             clientsNames.put(bufferedWriter, name);
             //System.out.println("Client connected: " + name);
+
+
+            if (SystemTray.isSupported()) {
+                new TrayIconDemo().displayTray("Conectado", name + " conectado :D");
+            } else {
+                System.err.println("System tray not supported!");
+            }
 
             if (clients.size() <= 1) showOptions();
             final BufferedReader gambi = bfr;
