@@ -21,7 +21,7 @@ public class Client {
     }
 
     private void connect() throws IOException {
-        socket = new Socket("localhost", 8094);
+        socket = new Socket("192.168.137.1", 8094);
         ou = socket.getOutputStream();
 
         ouw = new OutputStreamWriter(ou);
