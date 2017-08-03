@@ -151,15 +151,19 @@ public class Servidor extends Thread {
                         System.out.println("(" + i + ") -> ClientName: " + clientsNames.get(clients.get(i)));
                     }
 
+                    System.out.println("(666) -> Update List");
                     System.out.println("-----------------------------------------");
 
                     do {
                         System.out.print("Select a client: >. ");
                         clientSelected = reader.nextInt();
-                        if (clientSelected > clients.size() - 1 || clientSelected < 0) {
+                        if ((clientSelected > clients.size() - 1 || clientSelected < 0) && clientSelected != 666) {
                             System.out.println("Select a valid client");
+                            System.out.println("-----------------------------------------");
                         }
-                    } while (clientSelected > clients.size() - 1 || clientSelected < 0);
+                    } while ((clientSelected > clients.size() - 1 || clientSelected < 0) && clientSelected != 666);
+
+                    if(clientSelected == 666) continue;
 
                     do {
                         System.out.println("0 - TURN OFF COMPUTER");
@@ -195,7 +199,7 @@ public class Servidor extends Thread {
                     try {
                         sendMsgToClient(clients.get(clientSelected), msg);
                         System.out.println("Command send!");
-                    }catch (Exception ignored){
+                    } catch (Exception ignored) {
                         System.out.println("User disconnected: " + clientsNames.get(clients.get(clientSelected)));
                         clientsNames.remove(clients.get(clientSelected));
                         clients.remove(clients.get(clientSelected));
