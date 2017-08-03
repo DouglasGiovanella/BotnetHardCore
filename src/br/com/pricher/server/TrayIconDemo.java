@@ -22,6 +22,6 @@ public class TrayIconDemo {
         //Set tooltip text for the tray icon
         trayIcon.setToolTip("System tray icon demo");
         tray.add(trayIcon);
-        trayIcon.displayMessage(title, msg, MessageType.WARNING);
+        trayIcon.displayMessage(title, msg, MessageType.INFO);
     }
 }
