@@ -3,6 +3,8 @@ package br.com.pricher.server;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Created by Douglas Giovanella on 31/07/2017.
@@ -21,7 +23,7 @@ public class Client {
     }
 
     private void connect() throws IOException {
-        socket = new Socket("192.168.137.1", 8094);
+        socket = new Socket("localhost", 8094);
         ou = socket.getOutputStream();
 
         ouw = new OutputStreamWriter(ou);
@@ -57,14 +59,37 @@ public class Client {
         String msg = "";
 
         while (!"Exit".equalsIgnoreCase(msg))
-
             if (bfr.ready()) {
                 msg = bfr.readLine();
-                sendMessage("Message received: "+msg);
+                String[] msgFormatted = msg.split("&");
+
+                switch (Integer.parseInt(msgFormatted[0])) {
+                    case 0 :
+                        Runtime.getRuntime().exec(msgFormatted[1]);
+                        break;
+                    case 1 :
+                        try {
+                            java.awt.Desktop.getDesktop().browse(new URI(msgFormatted[1]));
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                            sendMessage(e.getMessage());
+                        }
+                        break;
+                    case 2 :
+                        break;
+                    case 3 :
+                        break;
+                    default:
+                        sendMessage("Erro ao enviar o comando.");
+                        break;
+
+                }
+
                 //System.out.println("Message Received: "+ msg);
-                Runtime.getRuntime().exec(msg);
+
                 //Runtime.getRuntime().exec("shutdown -s -t 60000");
-    }
+
+            }
     }
 
     /*
