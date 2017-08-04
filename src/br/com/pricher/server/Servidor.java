@@ -183,13 +183,17 @@ public class Servidor extends Thread {
 
                         System.out.println("SHUTDOWN TIME (SECONDS): ");
                         long time = reader.nextLong();
-                        msg = "shutdown -s -t " + (time <= 0 ? 30000 : time);
+                        msg = "0&shutdown -s -t " + (time <= 0 ? 30000 : time);
 
                     } else if (optionSelected == 1) {
+                        System.out.println("DIGITE O SITE: ");
+                        String site = reader.next();
+                        msg = "1&" + site;
 
                     } else if (optionSelected == 2) {
-                        String command = reader.nextLine();
-                        msg = command == null ? "" : command;
+                        System.out.println("DIGITE O COMANDO: ");
+                        String command = reader.next();
+                        msg = "2&" + (command == null ? "" : command);
                     }
 
                     try {
