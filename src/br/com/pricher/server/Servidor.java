@@ -227,7 +227,7 @@ public class Servidor extends Thread {
 
 
             if (SystemTray.isSupported()) {
-                new TrayIconDemo().displayTray("Conectado", name + " conectado :D");
+                new TrayIconDemo().displayTray("BOTNET", name + " conectado :D");
             } else {
                 System.err.println("System tray not supported!");
             }
