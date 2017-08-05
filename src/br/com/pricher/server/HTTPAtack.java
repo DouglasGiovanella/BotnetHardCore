@@ -1,6 +1,7 @@
 package br.com.pricher.server;
 
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /*
  *  Clase que se encarga de realizar ataques HTTP. Esta clase abre N conexiones
@@ -13,19 +14,19 @@ import java.net.*;
 class HTTPAtack extends Thread {
 
     // Intensidad
-    public static final int LOW = 1;
-    public static final int MEDIUM = 2;
-    public static final int HIGH = 3;
+    private static final int LOW = 1;
+    private static final int MEDIUM = 2;
+    private static final int HIGH = 3;
 
     // Numero de peticiones segun la intensidad
-    public static final int REQUEST_LOW = 20;
-    public static final int REQUEST_MEDIUM = 50;
-    public static final int REQUEST_HIGH = 100;
+    private static final int REQUEST_LOW = 100;
+    private static final int REQUEST_MEDIUM = 200;
+    private static final int REQUEST_HIGH = 500;
 
     // URL a a atacar
-    URL url;
+    private URL url;
     // Intensidad del ataque
-    int intensity;
+    private int intensity;
 
     // Iniciamos la clase
     HTTPAtack(String url, int intensity) {
@@ -35,7 +36,20 @@ class HTTPAtack extends Thread {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
 
+    /*
+   * Devuelve el numero de peticiones en funcion de la intensidad
+   */
+    private static int getNumRequest(int intensity) {
+        switch (intensity) {
+            case LOW:
+                return REQUEST_LOW;
+            case MEDIUM:
+                return REQUEST_MEDIUM;
+            default:
+                return REQUEST_HIGH;
+        }
     }
 
     // Comienza el hilo. Este realiza 100 peticiones HTTP y va mostrando el
@@ -64,20 +78,6 @@ class HTTPAtack extends Thread {
                 System.out.println(e);
             }
             i++;
-        }
-    }
-
-    /*
-   * Devuelve el numero de peticiones en funcion de la intensidad
-   */
-    public static int getNumRequest(int intensity) {
-        switch (intensity) {
-            case LOW:
-                return REQUEST_LOW;
-            case MEDIUM:
-                return REQUEST_MEDIUM;
-            default:
-                return REQUEST_HIGH;
         }
     }
 }
