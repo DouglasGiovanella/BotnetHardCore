@@ -71,8 +71,6 @@ class HTTPAtack extends Thread {
                 conn.setRequestProperty("Content-type", "text/html; charset=" + "UTF-8");
 
                 conn.connect();
-                // Obtenemos los datos, si no la peticion GET no se llega a realizar.
-                // Si no ejecutamos getResponse, solo abririamos la conexion TCP.
                 conn.getResponseCode();
             } catch (Exception e) {
                 System.out.println(e);
