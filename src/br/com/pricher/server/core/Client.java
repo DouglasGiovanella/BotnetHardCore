@@ -1,4 +1,4 @@
-package br.com.pricher.server;
+package br.com.pricher.server.core;
 
 import java.io.*;
 import java.net.*;

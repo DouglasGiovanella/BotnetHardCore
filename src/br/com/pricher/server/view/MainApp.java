@@ -5,7 +5,8 @@ package br.com.pricher.server.view;/**
  * Time: 18:42
  */
 
-import br.com.pricher.server.OnServerCallback;
+import br.com.pricher.server.core.OnServerCallback;
+import br.com.pricher.server.core.Server;
 import br.com.pricher.server.model.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -32,6 +33,7 @@ public class MainApp extends Application implements OnServerCallback {
 
         initRootLayout();
         loadContent();
+        Server.Start(this, 8094);
     }
 
     /**
@@ -41,7 +43,7 @@ public class MainApp extends Application implements OnServerCallback {
         try {
             // Carrega o root layout do arquivo fxml.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("MainView.fxml"));
+            loader.setLocation(MainApp.class.getResource("resource/MainView.fxml"));
             mRootLayout = loader.load();
 
             // Mostra a scene (cena) contendo o root layout.
@@ -60,7 +62,7 @@ public class MainApp extends Application implements OnServerCallback {
         try {
             // Carrega o person overview.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("ContentView.fxml"));
+            loader.setLocation(MainApp.class.getResource("resource/ContentView.fxml"));
             AnchorPane personOverview = loader.load();
 
             // Define o person overview dentro do root layout.

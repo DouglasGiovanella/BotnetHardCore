@@ -86,4 +86,9 @@ public class User {
     public ObjectProperty<LocalDate> connectionTimeProperty() {
         return connectionTime;
     }
+
+    @Override
+    public String toString() {
+        return "[" + getName() + "]-[" + getCountry() + "][" + getIp() + "]";
+    }
 }

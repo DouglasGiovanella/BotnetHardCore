@@ -1,4 +1,4 @@
-package br.com.pricher.server;
+package br.com.pricher.server.core;
 
 import br.com.pricher.server.model.User;
 

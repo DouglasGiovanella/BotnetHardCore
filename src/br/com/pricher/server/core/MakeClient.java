@@ -1,4 +1,4 @@
-package br.com.pricher.server;
+package br.com.pricher.server.core;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,6 +9,7 @@ import java.io.IOException;
  * Created by Jeferson Machado on 07/08/2017.
  */
 class MakeClient {
+
     private final String ABSOLUTE_PATH = new File(".").getCanonicalPath();
 
     MakeClient(String ip, String port) throws IOException {
