@@ -1,6 +1,7 @@
 package br.com.pricher.server;
 
-import javax.swing.*;
+import br.com.pricher.server.model.User;
+
 import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -14,10 +15,12 @@ import java.util.Scanner;
  * Created by Jeferson Machado on 26/07/2017.
  */
 public class Server extends Thread {
-
+    private static int userGeneratedId = 0;
     private static final int LOW = 1;
     private static final int MEDIUM = 2;
     private static final int HIGH = 3;
+
+    private static OnServerCallback mCallback;
 
     private static ArrayList<BufferedWriter> clients;
     private static HashMap<BufferedWriter, String> clientsNames;
@@ -35,39 +38,11 @@ public class Server extends Thread {
         }
     }
 
-    private static void sendToAll(String msg) throws IOException {
-        for (BufferedWriter bw : clients) {
-            bw.write(msg + "\r\n");
-            bw.flush();
-        }
-    }
+    public static void Start(OnServerCallback callback, int port) {
+        mCallback = callback;
 
-    private static void sendMsgToClient(BufferedWriter bf, String message) throws IOException {
-        if (clients.contains(bf)) {
-            bf.write(message + "\r\n");
-            bf.flush();
-        }
-    }
-
-    /***
-     * Método main
-     * @param args
-     */
-    public static void main(String[] args) {
         try {
-            JLabel lblMessage = new JLabel("Server port:");
-            JTextField txtPorta = new JTextField("8094");
-            Object[] texts = {lblMessage, txtPorta};
-            JOptionPane.showMessageDialog(null, texts);
-
-            final ServerSocket server = new ServerSocket(Integer.parseInt(txtPorta.getText()));
-
-            clientsNames = new HashMap<>();
-            clients = new ArrayList<>();
-
-            JOptionPane.showMessageDialog(null, "Server ativo na porta: " + txtPorta.getText());
-
-            new Thread(Server::showOptions).start();
+            final ServerSocket server = new ServerSocket(port);
 
             new Thread(() -> {
                 while (true) {
@@ -84,8 +59,23 @@ public class Server extends Thread {
                 }
             }).start();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
+            callback.onServerDisconnect();
+        }
+
+    }
+
+    private static void sendToAll(String msg) throws IOException {
+        for (BufferedWriter bw : clients) {
+            bw.write(msg + "\r\n");
+            bw.flush();
+        }
+    }
+
+    private static void sendMsgToClient(BufferedWriter bf, String message) throws IOException {
+        if (clients.contains(bf)) {
+            bf.write(message + "\r\n");
+            bf.flush();
         }
     }
 
@@ -233,6 +223,7 @@ public class Server extends Thread {
             showNotification(clientsNames.get(bufferedWriter) + " disconnected :C");
             clientsNames.remove(bufferedWriter);
             clients.remove(bufferedWriter);
+
         } catch (Exception ignored) {
         }
     }
@@ -255,7 +246,10 @@ public class Server extends Thread {
             Writer writer = new OutputStreamWriter(outPutStream);
             final BufferedWriter bufferedWriter = new BufferedWriter(writer);
             clients.add(bufferedWriter);
-            String name = bfr.readLine();
+
+            String content = bfr.readLine();
+            User user = User.create(content, ++userGeneratedId);
+            mCallback.onUserConnected(user);
             clientsNames.put(bufferedWriter, name);
 
             showNotification(name + " connected :D");

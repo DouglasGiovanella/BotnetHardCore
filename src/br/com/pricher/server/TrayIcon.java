@@ -13,7 +13,7 @@ class TrayIcon {
         Image image = Toolkit.getDefaultToolkit().createImage("icon.png");
         java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(image, "Tray Demo");
         trayIcon.setImageAutoSize(true);
-        trayIcon.setToolTip("System tray icon demo");
+        trayIcon.setToolTip("System tray icon");
         tray.add(trayIcon);
         trayIcon.displayMessage("BOTNET", msg, MessageType.INFO);
     }
