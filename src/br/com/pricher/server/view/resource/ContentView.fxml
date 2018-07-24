@@ -6,7 +6,7 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
             fx:controller="br.com.pricher.server.controller.ClientController">
     <children>
-        <SplitPane dividerPositions="0.22037218413320275" orientation="VERTICAL" prefHeight="450.0" prefWidth="750.0"
+        <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="450.0" prefWidth="750.0"
                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                    AnchorPane.topAnchor="0.0">
             <items>
@@ -14,14 +14,17 @@
                             SplitPane.resizableWithParent="false">
                     <children>
                         <Label layoutX="90.0" layoutY="18.0" text="Porta:"/>
-                        <TextField layoutX="128.0" layoutY="14.0" prefHeight="26.0" prefWidth="65.0" text="8094"/>
-                        <Button layoutX="211.0" layoutY="14.0" mnemonicParsing="false" onAction="#onStartButtonClick"
-                                text="Iniciar"/>
+                        <TextField fx:id="portTextInput" layoutX="128.0" layoutY="14.0" prefHeight="26.0"
+                                   prefWidth="65.0" text="8094"/>
+                        <Button fx:id="startServerBtn" layoutX="211.0" layoutY="14.0" mnemonicParsing="false"
+                                onAction="#onStartButtonClick" text="Iniciar"/>
                         <Label layoutX="608.0" layoutY="17.0" text="Usuários conectados:"/>
-                        <Label layoutX="727.0" layoutY="17.0" text="0"/>
+                        <Label fx:id="clientsQuantityLabel" layoutX="727.0" layoutY="17.0" text="0"/>
                         <Label layoutX="10.0" layoutY="18.0" text="Status:"/>
-                        <Circle fill="#ff0400" layoutX="61.0" layoutY="27.0" radius="9.0" stroke="BLACK"
-                                strokeType="INSIDE"/>
+                        <Circle fx:id="statusCircle" fill="#ff0400" layoutX="61.0" layoutY="27.0" radius="9.0"
+                                stroke="BLACK" strokeType="INSIDE"/>
+                        <Button layoutX="316.0" layoutY="15.0" mnemonicParsing="false" onAction="#onAttackButtonClick"
+                                prefHeight="25.0" prefWidth="220.0" text="ATACAR"/>
                     </children>
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="342.0" prefWidth="630.0">

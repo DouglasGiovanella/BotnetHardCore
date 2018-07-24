@@ -37,7 +37,7 @@ public class Server extends Thread {
         mCallback = callback;
         mClients = new HashMap<>();
         try {
-            ServerSocket server = new ServerSocket(port);
+            final ServerSocket server = new ServerSocket(port);
 
             new Thread(() -> {
                 while (true) {
@@ -230,9 +230,10 @@ public class Server extends Thread {
         try {
             OutputStream outPutStream = this.con.getOutputStream();
             Writer writer = new OutputStreamWriter(outPutStream);
-            BufferedWriter bufferedWriter = new BufferedWriter(writer);
+            final BufferedWriter bufferedWriter = new BufferedWriter(writer);
 
             String content = bfr.readLine();
+            System.out.println("Content -> " + content);
             Client client = Client.create(content, mUserGeneratedId++);
             mCallback.onClientConnected(client);
             mClients.put(bufferedWriter, client);

@@ -2,7 +2,7 @@ package br.com.pricher.server.model;
 
 import javafx.beans.property.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Project: BotnetHardCore
@@ -17,7 +17,7 @@ public class Client {
     private StringProperty country;
     private StringProperty operationSystem;
     private StringProperty ip;
-    private ObjectProperty<LocalDate> connectionTime;
+    private ObjectProperty<LocalDateTime> connectionTime;
 
     /**
      * Construtor padrao
@@ -31,7 +31,7 @@ public class Client {
         this.country = new SimpleStringProperty(country);
         this.operationSystem = new SimpleStringProperty(operationSystem);
         this.ip = new SimpleStringProperty(ip);
-        this.connectionTime = new SimpleObjectProperty<>(LocalDate.now());
+        this.connectionTime = new SimpleObjectProperty<>(LocalDateTime.now());
     }
 
     public static Client create(String content, int id) {
@@ -79,11 +79,11 @@ public class Client {
         return ip;
     }
 
-    public LocalDate getConnectionTime() {
+    public LocalDateTime getConnectionTime() {
         return connectionTime.get();
     }
 
-    public ObjectProperty<LocalDate> connectionTimeProperty() {
+    public ObjectProperty<LocalDateTime> connectionTimeProperty() {
         return connectionTime;
     }
 

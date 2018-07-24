@@ -26,9 +26,6 @@ public class Client {
                 Writer ouw = new OutputStreamWriter(ou);
                 bfw = new BufferedWriter(ouw);
 
-                bfw.write("bct");
-                bfw.flush();
-
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
@@ -44,7 +41,7 @@ public class Client {
 
         InetAddress ipAddress = InetAddress.getLocalHost();
 
-        bfw.write(osUser + "&" + osCountry + "&" + osUser + "&" + ipAddress);
+        bfw.write(osUser + "&" + osCountry + "&" + osName + "&" + ipAddress + "\r\n");
         bfw.flush();
     }
 

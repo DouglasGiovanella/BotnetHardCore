@@ -2,11 +2,14 @@ package br.com.pricher.server.controller;
 
 import br.com.pricher.server.model.Client;
 import br.com.pricher.server.view.MainApp;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @Author: Douglas A. Giovanella
@@ -16,6 +19,7 @@ import java.time.LocalDate;
 
 public class ClientController {
 
+    //region Tabela
     @FXML
     private TableView<Client> clientTable;
 
@@ -32,7 +36,23 @@ public class ClientController {
     private TableColumn<Client, String> ipColumn;
 
     @FXML
-    private TableColumn<Client, LocalDate> connectionTimeColumn;
+    private TableColumn<Client, LocalDateTime> connectionTimeColumn;
+
+    //endregion
+
+    //region HeaderTop
+    @FXML
+    private TextField portTextInput;
+
+    @FXML
+    private Button startServerBtn;
+
+    @FXML
+    private Circle statusCircle;
+
+    @FXML
+    private Label clientsQuantityLabel;
+    //endregion
 
     private MainApp mainApp;
 
@@ -46,6 +66,10 @@ public class ClientController {
         operationSystemColumn.setCellValueFactory(cellData -> cellData.getValue().operationSystemProperty());
         ipColumn.setCellValueFactory(cellData -> cellData.getValue().ipProperty());
         connectionTimeColumn.setCellValueFactory(cellData -> cellData.getValue().connectionTimeProperty());
+
+        for (TableColumn<Client, ?> clientTableColumn : clientTable.getColumns()) {
+            clientTableColumn.setStyle("-fx-alignment: CENTER;");
+        }
     }
 
     public void setMainApp(MainApp mainApp) {
@@ -54,14 +78,29 @@ public class ClientController {
 
     public void add(Client client) {
         clientTable.getItems().add(client);
+        Platform.runLater(() -> clientsQuantityLabel.setText(String.valueOf(clientTable.getItems().size())));
     }
 
     public void remove(Client client) {
         clientTable.getItems().remove(client);
+        Platform.runLater(() -> clientsQuantityLabel.setText(String.valueOf(clientTable.getItems().size())));
     }
 
     @FXML
     private void onStartButtonClick() {
+        if (Objects.equals(startServerBtn.getText(), "Iniciar")) {
+            mainApp.startServer(Integer.parseInt(portTextInput.getText()));
+            statusCircle.setFill(Color.LIGHTGREEN);
+            startServerBtn.setText("Parar");
+        } else {
+            mainApp.stopServer();
+            statusCircle.setFill(Color.RED);
+            startServerBtn.setText("Iniciar");
+        }
+    }
 
+    @FXML
+    private void onAttackButtonClick() {
+        mainApp.openAttackModal();
     }
 }
