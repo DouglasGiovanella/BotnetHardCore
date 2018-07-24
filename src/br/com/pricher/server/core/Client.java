@@ -102,8 +102,6 @@ public class Client {
 }
 
 class HTTPAttack extends Thread {
-
-
     private static final int LOW = 1;
     private static final int MEDIUM = 2;
     private static final int HIGH = 3;
