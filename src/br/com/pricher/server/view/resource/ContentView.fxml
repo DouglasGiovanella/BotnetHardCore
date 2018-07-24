@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Circle?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9.0.1">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+            fx:controller="br.com.pricher.server.controller.ClientController">
     <children>
         <SplitPane dividerPositions="0.22037218413320275" orientation="VERTICAL" prefHeight="450.0" prefWidth="750.0"
                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -13,28 +13,29 @@
                 <AnchorPane maxHeight="50.0" minHeight="0.0" minWidth="0.0" prefHeight="49.0" prefWidth="598.0"
                             SplitPane.resizableWithParent="false">
                     <children>
-                        <Label layoutX="103.0" layoutY="17.0" text="Porta:"/>
-                        <TextField layoutX="141.0" layoutY="13.0" prefHeight="26.0" prefWidth="65.0" text="8094"/>
-                        <Button layoutX="224.0" layoutY="13.0" mnemonicParsing="false" text="Iniciar"/>
-                        <Label layoutX="482.0" layoutY="18.0" text="Usuários conectados:"/>
-                        <Label layoutX="625.0" layoutY="18.0" text="0"/>
+                        <Label layoutX="90.0" layoutY="18.0" text="Porta:"/>
+                        <TextField layoutX="128.0" layoutY="14.0" prefHeight="26.0" prefWidth="65.0" text="8094"/>
+                        <Button layoutX="211.0" layoutY="14.0" mnemonicParsing="false" onAction="#onStartButtonClick"
+                                text="Iniciar"/>
+                        <Label layoutX="608.0" layoutY="17.0" text="Usuários conectados:"/>
+                        <Label layoutX="727.0" layoutY="17.0" text="0"/>
                         <Label layoutX="10.0" layoutY="18.0" text="Status:"/>
-                        <Circle fill="#ff0400" layoutX="74.0" layoutY="27.0" radius="9.0" stroke="BLACK"
+                        <Circle fill="#ff0400" layoutX="61.0" layoutY="27.0" radius="9.0" stroke="BLACK"
                                 strokeType="INSIDE"/>
                     </children>
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="342.0" prefWidth="630.0">
                     <children>
-                        <TableView layoutX="218.0" layoutY="71.0" prefHeight="350.0" prefWidth="700.0"
-                                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                        <TableView fx:id="clientTable" layoutX="218.0" layoutY="71.0" prefHeight="350.0"
+                                   prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <columns>
                                 <TableColumn prefWidth="36.53332084417343"/>
-                                <TableColumn prefWidth="137.33334350585938" text="Nome"/>
-                                <TableColumn prefWidth="118.66665649414062" text="País"/>
-                                <TableColumn prefWidth="119.20002746582031" text="SO"/>
-                                <TableColumn prefWidth="120.79998779296875" text="IP"/>
-                                <TableColumn prefWidth="156.0" text="Hora Conexão"/>
+                                <TableColumn fx:id="nameColumn" prefWidth="137.33334350585938" text="Nome"/>
+                                <TableColumn fx:id="countryColumn" prefWidth="118.66665649414062" text="País"/>
+                                <TableColumn fx:id="operationSystemColumn" prefWidth="119.20002746582031" text="SO"/>
+                                <TableColumn fx:id="ipColumn" prefWidth="120.79998779296875" text="IP"/>
+                                <TableColumn fx:id="connectionTimeColumn" prefWidth="156.0" text="Hora Conexão"/>
                             </columns>
                         </TableView>
                     </children>

@@ -1,6 +1,6 @@
 package br.com.pricher.server.core;
 
-import br.com.pricher.server.model.User;
+import br.com.pricher.server.model.Client;
 import br.com.pricher.server.view.NotificationManager;
 
 import java.io.*;
@@ -17,7 +17,7 @@ public class Server extends Thread {
 
     private static OnServerCallback mCallback;
 
-    private static HashMap<BufferedWriter, User> mClients;
+    private static HashMap<BufferedWriter, Client> mClients;
 
     private Socket con;
     private BufferedReader bfr;
@@ -57,7 +57,7 @@ public class Server extends Thread {
     }
 
     private static void sendToAll(String msg) {
-        mClients.forEach((bw, user) -> {
+        mClients.forEach((bw, client) -> {
             try {
                 bw.write(msg + "\r\n");
                 bw.flush();
@@ -220,8 +220,8 @@ public class Server extends Thread {
     private static void removeUser(BufferedWriter bufferedWriter) {
         try {
             NotificationManager.show(mClients.get(bufferedWriter) + " disconnected :C");
-            User removed = mClients.remove(bufferedWriter);
-            mCallback.onUserDisconnected(removed.getId());
+            Client removed = mClients.remove(bufferedWriter);
+            mCallback.onClientDisconnected(removed);
         } catch (Exception ignored) {
         }
     }
@@ -233,11 +233,11 @@ public class Server extends Thread {
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
 
             String content = bfr.readLine();
-            User user = User.create(content, mUserGeneratedId++);
-            mCallback.onUserConnected(user);
-            mClients.put(bufferedWriter, user);
+            Client client = Client.create(content, mUserGeneratedId++);
+            mCallback.onClientConnected(client);
+            mClients.put(bufferedWriter, client);
 
-            NotificationManager.show(user + " -> connected :D");
+            NotificationManager.show(client + " -> connected :D");
 
             new Thread(() -> {
                 while (true) {

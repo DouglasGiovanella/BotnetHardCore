@@ -26,6 +26,9 @@ public class Client {
                 Writer ouw = new OutputStreamWriter(ou);
                 bfw = new BufferedWriter(ouw);
 
+                bfw.write("bct");
+                bfw.flush();
+
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }

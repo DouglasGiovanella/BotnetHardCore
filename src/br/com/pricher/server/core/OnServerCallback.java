@@ -1,18 +1,18 @@
 package br.com.pricher.server.core;
 
-import br.com.pricher.server.model.User;
+import br.com.pricher.server.model.Client;
 
 /**
  * Project: BotnetHardCore
- * User: Jeferson Machado <jefersonmachado@univille.br>
+ * Client: Jeferson Machado <jefersonmachado@univille.br>
  * Date: 22/07/2018
  * Time: 19:28
  */
 public interface OnServerCallback {
 
-    void onUserConnected(User user);
+    void onClientConnected(Client client);
 
-    void onUserDisconnected(int userId);
+    void onClientDisconnected(Client client);
 
     void onServerDisconnect();
 }

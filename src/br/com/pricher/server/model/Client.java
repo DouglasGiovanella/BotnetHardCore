@@ -6,11 +6,11 @@ import java.time.LocalDate;
 
 /**
  * Project: BotnetHardCore
- * User: Jeferson Machado <jefersonmachado@univille.br>
+ * Client: Jeferson Machado <jefersonmachado@univille.br>
  * Date: 22/07/2018
  * Time: 19:05
  */
-public class User {
+public class Client {
 
     private IntegerProperty id;
     private StringProperty name;
@@ -22,10 +22,10 @@ public class User {
     /**
      * Construtor padrao
      */
-    public User() {
+    public Client() {
     }
 
-    public User(int id, String name, String country, String operationSystem, String ip) {
+    public Client(int id, String name, String country, String operationSystem, String ip) {
         this.id = new SimpleIntegerProperty(id);
         this.name = new SimpleStringProperty(name);
         this.country = new SimpleStringProperty(country);
@@ -34,9 +34,9 @@ public class User {
         this.connectionTime = new SimpleObjectProperty<>(LocalDate.now());
     }
 
-    public static User create(String content, int id) {
+    public static Client create(String content, int id) {
         String[] split = content.split("&");
-        return new User(id, split[0], split[1], split[2], split[3]);
+        return new Client(id, split[0], split[1], split[2], split[3]);
     }
 
     public int getId() {
