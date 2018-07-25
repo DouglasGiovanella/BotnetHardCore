@@ -7,7 +7,7 @@ package br.com.pricher.server.view;
  * Time: 18:42
  */
 
-import br.com.pricher.server.controller.ClientAtackDialogController;
+import br.com.pricher.server.controller.ClientAttackDialogController;
 import br.com.pricher.server.controller.ClientController;
 import br.com.pricher.server.core.OnServerCallback;
 import br.com.pricher.server.core.Server;
@@ -126,7 +126,7 @@ public class MainApp extends Application implements OnServerCallback {
             dialogStage.setScene(scene);
 
             // Define o client no controller.
-            ClientAtackDialogController controller = loader.getController();
+            ClientAttackDialogController controller = loader.getController();
             controller.setmDialogStage(dialogStage);
             controller.setClient(client);
 

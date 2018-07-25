@@ -13,7 +13,7 @@ import javafx.stage.Stage;
  * Date: 24/07/2018
  * Time: 10:55
  */
-public class ClientAtackDialogController {
+public class ClientAttackDialogController {
 
     @FXML
     private Label clientName;
