@@ -1,7 +1,9 @@
 package br.com.pricher.server.model;
 
+import br.com.pricher.server.messages.Message;
 import javafx.beans.property.*;
 
+import java.net.InetAddress;
 import java.time.LocalDateTime;
 
 /**
@@ -25,18 +27,17 @@ public class Client {
     public Client() {
     }
 
-    public Client(int id, String name, String country, String operationSystem, String ip) {
+    public Client(int id, String name, String country, String operationSystem, InetAddress ip) {
         this.id = new SimpleIntegerProperty(id);
         this.name = new SimpleStringProperty(name);
         this.country = new SimpleStringProperty(country);
         this.operationSystem = new SimpleStringProperty(operationSystem);
-        this.ip = new SimpleStringProperty(ip);
+        this.ip = new SimpleStringProperty(ip.getHostAddress());
         this.connectionTime = new SimpleObjectProperty<>(LocalDateTime.now());
     }
 
-    public static Client create(String content, int id) {
-        String[] split = content.split("&");
-        return new Client(id, split[0], split[1], split[2], split[3]);
+    public static Client create(Message content, int id) {
+        return new Client(id, content.getName(), content.getCountry(), content.getOSName(), content.getIpAddress());
     }
 
     public int getId() {

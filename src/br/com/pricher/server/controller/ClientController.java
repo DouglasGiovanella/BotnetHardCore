@@ -22,34 +22,25 @@ public class ClientController {
     //region Tabela
     @FXML
     private TableView<Client> clientTable;
-
     @FXML
     private TableColumn<Client, String> nameColumn;
-
     @FXML
     private TableColumn<Client, String> countryColumn;
-
     @FXML
     private TableColumn<Client, String> operationSystemColumn;
-
     @FXML
     private TableColumn<Client, String> ipColumn;
-
     @FXML
     private TableColumn<Client, LocalDateTime> connectionTimeColumn;
-
     //endregion
 
     //region HeaderTop
     @FXML
     private TextField portTextInput;
-
     @FXML
     private Button startServerBtn;
-
     @FXML
     private Circle statusCircle;
-
     @FXML
     private Label clientsQuantityLabel;
     //endregion

