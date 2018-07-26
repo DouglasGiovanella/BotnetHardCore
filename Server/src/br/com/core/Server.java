@@ -1,7 +1,13 @@
 package br.com.core;
 
 import br.com.model.ClientTableRow;
-import br.com.view.NotificationManager;
+import br.com.view.notification.NotificationManager;
+import br.com.view.notification.traynotifications.animations.AnimationType;
+import br.com.view.notification.traynotifications.notification.TrayNotification;
+import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 import model.ConnectionData;
 import model.GenericMessage;
 
@@ -125,22 +131,26 @@ public class Server extends Thread {
             mCallback.onClientConnected(client);
             mClients.put(output, client);
 
-            NotificationManager.show(client + " -> connected :D");
+            Platform.runLater(() -> {
+                TrayNotification tray = new TrayNotification();
+                tray.setTitle("A new user has joined!");
+                tray.setMessage(client.getName() + " has joined!");
+                tray.setRectangleFill(Paint.valueOf("#2C3E50"));
+                tray.setAnimationType(AnimationType.POPUP);
+                tray.setImage(new Image("file:Server/src/br/com/resources/images/its_trap.jpg"));
+                tray.showAndDismiss(Duration.seconds(5));
+            });
 
             new Thread(() -> {
                 while (true) {
                     try {
-
                         Object object = input.readObject();
-
                         if (object == null) {
                             removeUser(output);
                             continue;
                         }
-
                         GenericMessage message = (GenericMessage) object;
                         NotificationManager.show(message.getAsString());
-
                     } catch (Exception e) {
                         removeUser(output);
                         break;

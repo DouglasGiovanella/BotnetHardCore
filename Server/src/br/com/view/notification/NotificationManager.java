@@ -1,4 +1,4 @@
-package br.com.view;
+package br.com.view.notification;
 
 import java.awt.*;
 import java.awt.TrayIcon.MessageType;
