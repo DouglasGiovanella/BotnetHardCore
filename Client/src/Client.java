@@ -64,7 +64,7 @@ public class Client {
 
         try {
             sendClientData();
-            sendMessage(CONNECTED_SUCCESSFULLY);
+            //sendMessage(CONNECTED_SUCCESSFULLY);
             System.out.println("Sockets in and out ready!");
             while (mSocket.isConnected()) {
 
@@ -96,7 +96,7 @@ public class Client {
      * @throws IOException retorna IO Exception caso dê algum erro.
      */
     private void sendMessage(String msg) throws IOException {
-        GenericMessage<String> createMessage = new GenericMessage<>();
+        GenericMessage createMessage = new GenericMessage();
         createMessage.setData(msg);
         createMessage.setType(Objects.equals(msg, CONNECTED_SUCCESSFULLY) ? MessageTypeEnum.CONNECTED : MessageTypeEnum.MESSAGE);
         oos.writeObject(createMessage);
@@ -104,7 +104,7 @@ public class Client {
     }
 
     public void sendStatusUpdate(ClientStatusEnum status) throws IOException {
-        GenericMessage<ClientStatusEnum> createMessage = new GenericMessage<>();
+        GenericMessage createMessage = new GenericMessage();
         createMessage.setType(MessageTypeEnum.STATUS_UPDATE);
         createMessage.setData(status);
         oos.writeObject(createMessage);

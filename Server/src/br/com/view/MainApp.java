@@ -13,6 +13,7 @@ import br.com.core.OnServerCallback;
 import br.com.core.Server;
 import br.com.model.ClientTableRow;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -41,6 +42,13 @@ public class MainApp extends Application implements OnServerCallback {
         // Set the application icon.
         this.mPrimaryStage.getIcons().add(new Image("file:src/br/com/pricher/server/resources/images/if_trojan.png"));
 
+        primaryStage.setOnCloseRequest(event -> {
+            event.consume();
+            primaryStage.close();
+            Platform.exit();
+            System.exit(0);
+        });
+
         initRootLayout();
         loadContent();
     }
@@ -50,7 +58,7 @@ public class MainApp extends Application implements OnServerCallback {
     }
 
     public void stopServer() {
-
+        Server.closeConnections();
     }
 
     /**

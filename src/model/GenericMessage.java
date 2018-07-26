@@ -10,10 +10,10 @@ import java.io.Serializable;
  * @Email: douglas_giovanella@hotmail.com
  * @Date: 25/07/2018
  */
-public class GenericMessage<T> implements Serializable {
+public class GenericMessage implements Serializable {
 
     private MessageTypeEnum type;
-    private T data;
+    private Object data;
 
     public MessageTypeEnum getType() {
         return type;
@@ -23,11 +23,11 @@ public class GenericMessage<T> implements Serializable {
         this.type = type;
     }
 
-    public T getData() {
+    public Object getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(Object data) {
         this.data = data;
     }
 
@@ -35,8 +35,8 @@ public class GenericMessage<T> implements Serializable {
         return (ClientStatusEnum) data;
     }
 
-    public ClientStatusEnum getAsString() {
-        return (ClientStatusEnum) data;
+    public String getAsString() {
+        return (String) data;
     }
 
     @Override
