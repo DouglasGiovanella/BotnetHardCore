@@ -1,6 +1,8 @@
-package br.com.core;
+package br.com.core.callback;
 
 import br.com.model.ClientTableRow;
+import model.GenericMessage;
+import model.constant.ClientStatusEnum;
 
 /**
  * Project: BotnetHardCore
@@ -14,5 +16,9 @@ public interface OnServerCallback {
 
     void onClientDisconnected(ClientTableRow client);
 
-    void onServerDisconnect();
+    void onMessageReceived(ClientTableRow clientTableRow, GenericMessage message);
+
+    void onDisconnect();
+
+    void onClientStatusChanged(ClientTableRow client, ClientStatusEnum status);
 }

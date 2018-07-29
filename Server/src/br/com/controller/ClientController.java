@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import model.constant.ClientStatusEnum;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -23,6 +24,8 @@ public class ClientController {
     @FXML
     private TableView<ClientTableRow> clientTable;
     @FXML
+    private TableColumn<ClientTableRow, Integer> idColumn;
+    @FXML
     private TableColumn<ClientTableRow, String> nameColumn;
     @FXML
     private TableColumn<ClientTableRow, String> countryColumn;
@@ -32,6 +35,8 @@ public class ClientController {
     private TableColumn<ClientTableRow, String> ipColumn;
     @FXML
     private TableColumn<ClientTableRow, LocalDateTime> connectionTimeColumn;
+    @FXML
+    private TableColumn<ClientTableRow, String> statusColumn;
     //endregion
 
     //region HeaderTop
@@ -52,11 +57,14 @@ public class ClientController {
 
     @FXML
     private void initialize() {
+
+        idColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         countryColumn.setCellValueFactory(cellData -> cellData.getValue().countryProperty());
         operationSystemColumn.setCellValueFactory(cellData -> cellData.getValue().operationSystemProperty());
         ipColumn.setCellValueFactory(cellData -> cellData.getValue().ipAddressProperty());
         connectionTimeColumn.setCellValueFactory(cellData -> cellData.getValue().connectionTimeProperty());
+        statusColumn.setCellValueFactory(cellData -> cellData.getValue().statusProperty());
 
         for (TableColumn<ClientTableRow, ?> clientTableColumn : clientTable.getColumns()) {
             clientTableColumn.setStyle("-fx-alignment: CENTER;");
@@ -68,13 +76,17 @@ public class ClientController {
     }
 
     public void add(ClientTableRow client) {
-        clientTable.getItems().add(client);
-        Platform.runLater(() -> clientsQuantityLabel.setText(String.valueOf(clientTable.getItems().size())));
+        Platform.runLater(() -> {
+            clientTable.getItems().add(client);
+            clientsQuantityLabel.setText(String.valueOf(clientTable.getItems().size()));
+        });
     }
 
     public void remove(ClientTableRow client) {
-        clientTable.getItems().remove(client);
-        Platform.runLater(() -> clientsQuantityLabel.setText(String.valueOf(clientTable.getItems().size())));
+        Platform.runLater(() -> {
+            clientTable.getItems().remove(client);
+            clientsQuantityLabel.setText(String.valueOf(clientTable.getItems().size()));
+        });
     }
 
     @FXML
@@ -96,7 +108,7 @@ public class ClientController {
         if (selectedClient != null) {
             boolean okClicked = mainApp.showClientAttackDialog(selectedClient);
             if (okClicked) {
-                System.out.println("Atacando?");
+                //System.out.println("Atacando?");
                 //Realizar uma atividade visual para o usuario. mostrando que o cliente recebeu o comando.
                 //Mostrar a finailziacao tambem.
             }
@@ -108,5 +120,13 @@ public class ClientController {
             alert.setContentText("Por favor, selecione um cliente na tabela.");
             alert.showAndWait();
         }
+    }
+
+    public void updateStatus(ClientTableRow client, ClientStatusEnum status) {
+        Platform.runLater(() -> clientTable.getItems()
+                .stream()
+                .findFirst()
+                .filter(x -> x.getId() == client.getId())
+                .ifPresent(clientTableRow -> clientTableRow.setStatus(status)));
     }
 }

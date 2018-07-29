@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Circle?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="450.0" prefWidth="889.0"
-            stylesheets="@../styles/DarkTheme.css" xmlns="http://javafx.com/javafx/9.0.1"
+            stylesheets="@../styles/DarkTheme.css" xmlns="http://javafx.com/javafx/8"
             fx:controller="br.com.controller.ClientController">
     <children>
         <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="450.0" prefWidth="750.0"
@@ -34,11 +34,12 @@
                                    prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <columns>
-                                <TableColumn prefWidth="12.799986839294434"/>
-                                <TableColumn fx:id="nameColumn" prefWidth="161.6000099182129" text="Nome"/>
+                                <TableColumn fx:id="idColumn" prefWidth="38.666664123535156" text="Id"/>
+                                <TableColumn fx:id="nameColumn" prefWidth="137.33333587646484" text="Nome"/>
+                                <TableColumn fx:id="ipColumn" prefWidth="162.39996337890625" text="IP"/>
+                                <TableColumn fx:id="statusColumn" prefWidth="187.2000732421875" text="Status"/>
                                 <TableColumn fx:id="countryColumn" prefWidth="118.66665649414062" text="País"/>
                                 <TableColumn fx:id="operationSystemColumn" prefWidth="168.79998779296875" text="SO"/>
-                                <TableColumn fx:id="ipColumn" prefWidth="162.39996337890625" text="IP"/>
                                 <TableColumn fx:id="connectionTimeColumn" prefWidth="187.2000732421875"
                                              text="Hora Conexão"/>
                             </columns>

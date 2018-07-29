@@ -1,4 +1,4 @@
-package br.com.view.notification.traynotifications.animations;
+package br.com.view.notification.animations;
 
 import javafx.util.Duration;
 

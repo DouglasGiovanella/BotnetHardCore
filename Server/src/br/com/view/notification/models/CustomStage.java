@@ -1,4 +1,4 @@
-package br.com.view.notification.traynotifications.models;
+package br.com.view.notification.models;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;

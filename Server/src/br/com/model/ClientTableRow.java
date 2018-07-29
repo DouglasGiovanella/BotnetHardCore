@@ -2,6 +2,7 @@ package br.com.model;
 
 import javafx.beans.property.*;
 import model.ConnectionData;
+import model.constant.ClientStatusEnum;
 
 import java.net.InetAddress;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class ClientTableRow {
     private StringProperty operationSystem;
     private StringProperty ipAddress;
     private ObjectProperty<LocalDateTime> connectionTime;
+    private StringProperty status;
 
     /**
      * Construtor padrao
@@ -34,10 +36,31 @@ public class ClientTableRow {
         this.operationSystem = new SimpleStringProperty(operationSystem);
         this.ipAddress = new SimpleStringProperty(ip.getHostAddress());
         this.connectionTime = new SimpleObjectProperty<>(LocalDateTime.now());
+        setStatus(ClientStatusEnum.STAND_BY);
     }
 
     public static ClientTableRow create(ConnectionData content, int id) {
         return new ClientTableRow(id, content.getName(), content.getCountry(), content.getOperationalSystemName(), content.getIpAddress());
+    }
+
+    public String getStatus() {
+        return status.get();
+    }
+
+    public void setStatus(ClientStatusEnum status) {
+        if (this.status == null) {
+            this.status = new SimpleStringProperty();
+        }
+
+        if (status == ClientStatusEnum.ATTACKING) {
+            this.status.set("Atacando");
+        } else if (status == ClientStatusEnum.STAND_BY) {
+            this.status.set("Aguardando");
+        }
+    }
+
+    public StringProperty statusProperty() {
+        return status;
     }
 
     public int getId() {

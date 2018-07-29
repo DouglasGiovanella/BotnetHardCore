@@ -1,6 +1,6 @@
-package br.com.view.notification.traynotifications.animations;
+package br.com.view.notification.animations;
 
-import br.com.view.notification.traynotifications.models.CustomStage;
+import br.com.view.notification.models.CustomStage;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.SequentialTransition;

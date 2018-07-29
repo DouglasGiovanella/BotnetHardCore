@@ -1,4 +1,4 @@
-package br.com.view.notification.traynotifications.models;
+package br.com.view.notification.models;
 
 public class Location {
 

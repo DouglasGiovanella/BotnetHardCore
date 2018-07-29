@@ -1,4 +1,4 @@
-package br.com.view.notification.traynotifications.notification;
+package br.com.view.notification.models;
 
 public enum NotificationType {
     INFORMATION,

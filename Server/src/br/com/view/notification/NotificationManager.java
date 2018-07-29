@@ -1,5 +1,12 @@
 package br.com.view.notification;
 
+import br.com.model.ClientTableRow;
+import br.com.view.notification.animations.AnimationType;
+import br.com.view.notification.models.NotificationType;
+import javafx.application.Platform;
+import javafx.scene.paint.Paint;
+import javafx.util.Duration;
+
 import java.awt.*;
 import java.awt.TrayIcon.MessageType;
 
@@ -8,7 +15,7 @@ import java.awt.TrayIcon.MessageType;
  */
 public class NotificationManager {
 
-    public static void show(String message) {
+    public static void showWindowsNotification(String message) {
         if (SystemTray.isSupported()) {
             try {
                 new NotificationManager().displayTray(message);
@@ -18,6 +25,23 @@ public class NotificationManager {
         } else {
             System.err.println("System tray not supported!");
         }
+    }
+
+    public static void showCustomNotification(String title, String message, NotificationType type) {
+        Platform.runLater(() -> {
+            TrayNotification tray = new TrayNotification();
+            tray.setTitle(title);
+            tray.setMessage(message);
+            tray.setNotificationType(type);
+            tray.setRectangleFill(Paint.valueOf("#2C3E50"));
+            tray.setAnimationType(AnimationType.POPUP);
+            tray.setImage(new javafx.scene.image.Image("file:Server/src/br/com/resources/images/its_trap.jpg"));
+            tray.showAndDismiss(Duration.seconds(5));
+        });
+    }
+
+    public static void showNewClientConnected(ClientTableRow clientTableRow) {
+        showCustomNotification("A new user has joined!", clientTableRow + " has joined!", NotificationType.SUCCESS);
     }
 
     private void displayTray(String msg) throws AWTException {

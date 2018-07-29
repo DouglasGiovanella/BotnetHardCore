@@ -5,8 +5,8 @@ package model.constant;
  * @Email: douglas_giovanella@hotmail.com
  * @Date: 25/07/2018
  */
-public enum MessageTypeEnum {
+public enum ClientMessageTypeEnum {
 
-    NOTIFICATION, DISCONNECTED, CONNECTED, STATUS_UPDATE, MESSAGE
+    STATUS_UPDATE, MESSAGE
 
 }

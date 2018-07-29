@@ -1,7 +1,8 @@
 package model;
 
+import model.constant.AttackType;
+import model.constant.ClientMessageTypeEnum;
 import model.constant.ClientStatusEnum;
-import model.constant.MessageTypeEnum;
 
 import java.io.Serializable;
 
@@ -12,15 +13,43 @@ import java.io.Serializable;
  */
 public class GenericMessage implements Serializable {
 
-    private MessageTypeEnum type;
+    private ClientMessageTypeEnum type;
+    private AttackType attackType;
     private Object data;
 
-    public MessageTypeEnum getType() {
-        return type;
+    private boolean sentResponse;
+
+    public GenericMessage(AttackType attackType, Object data, boolean sentResponse) {
+        this.attackType = attackType;
+        this.data = data;
+        this.sentResponse = sentResponse;
     }
 
-    public void setType(MessageTypeEnum type) {
-        this.type = type;
+    public GenericMessage() {
+    }
+
+    public static GenericMessage createAttackMessage(AttackType attackType, Object data, boolean sentResponse) {
+        return new GenericMessage(attackType, data, sentResponse);
+    }
+
+    public static GenericMessage createAttackMessage(AttackType attackType, Object data) {
+        return new GenericMessage(attackType, data, false);
+    }
+
+    public boolean isSentResponse() {
+        return sentResponse;
+    }
+
+    public void setSentResponse(boolean sentResponse) {
+        this.sentResponse = sentResponse;
+    }
+
+    public AttackType getAttackType() {
+        return attackType;
+    }
+
+    public void setAttackType(AttackType attackType) {
+        this.attackType = attackType;
     }
 
     public Object getData() {
@@ -39,8 +68,26 @@ public class GenericMessage implements Serializable {
         return (String) data;
     }
 
+    public ClientMessageTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(ClientMessageTypeEnum type) {
+        this.type = type;
+    }
+
+    public SimplePair<String, Integer> getAsPair() {
+        return (SimplePair) data;
+    }
+
     @Override
     public String toString() {
-        return "[Message received:" + getAsString() + "] [MessageType:" + getType() + "]";
+        return "[Message received: " + data + "]" +
+                " - " +
+                "[MessageType: " + getType() + "]" +
+                " - " +
+                "[SentResponse: " + sentResponse + "]" +
+                " - " +
+                "[AttackType: " + attackType + "]";
     }
 }

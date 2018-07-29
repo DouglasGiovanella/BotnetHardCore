@@ -1,7 +1,8 @@
-package br.com.view.notification.traynotifications.notification;
+package br.com.view.notification;
 
-import br.com.view.notification.traynotifications.animations.*;
-import br.com.view.notification.traynotifications.models.CustomStage;
+import br.com.view.notification.animations.*;
+import br.com.view.notification.models.CustomStage;
+import br.com.view.notification.models.NotificationType;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -19,7 +20,7 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.net.URL;
 
-public final class TrayNotification {
+final class TrayNotification {
 
     @FXML
     private Label lblTitle, lblMessage, lblClose;
@@ -73,7 +74,7 @@ public final class TrayNotification {
     private void initTrayNotification(String title, String message, NotificationType type) {
 
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../../resource/TrayNotification.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("resources/TrayNotification.fxml"));
 
             fxmlLoader.setController(this);
             fxmlLoader.load();
@@ -121,27 +122,27 @@ public final class TrayNotification {
         switch (nType) {
 
             case INFORMATION:
-                imageLocation = getClass().getResource("/tray/resources/info.png");
+                imageLocation = getClass().getResource("resources/img/info.png");
                 paintHex = "#2C54AB";
                 break;
 
             case NOTICE:
-                imageLocation = getClass().getResource("/tray/resources/notice.png");
+                imageLocation = getClass().getResource("resources/img/notice.png");
                 paintHex = "#8D9695";
                 break;
 
             case SUCCESS:
-                imageLocation = getClass().getResource("/tray/resources/success.png");
+                imageLocation = getClass().getResource("resources/img/success.png");
                 paintHex = "#009961";
                 break;
 
             case WARNING:
-                imageLocation = getClass().getResource("/tray/resources/warning.png");
+                imageLocation = getClass().getResource("resources/img/warning.png");
                 paintHex = "#E23E0A";
                 break;
 
             case ERROR:
-                imageLocation = getClass().getResource("/tray/resources/error.png");
+                imageLocation = getClass().getResource("resources/img/error.png");
                 paintHex = "#CC0033";
                 break;
 
