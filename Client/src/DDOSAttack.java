@@ -16,10 +16,17 @@ public class DDOSAttack {
     DDOSAttack(String host, AttackCallback callback) {
         try {
             this.callback = callback;
-            mHostURL = new URL(host);
+            mHostURL = new URL(resolveHost(host));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private String resolveHost(String host) {
+        if (!host.toLowerCase().startsWith("http")) {
+            return "http://" + host;
+        }
+        return host;
     }
 
     void httpAttack(int requisitionQuantity) {

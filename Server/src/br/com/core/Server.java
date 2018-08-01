@@ -113,6 +113,14 @@ public class Server extends Thread {
         }
     }
 
+    public void send(GenericMessage message, ClientTableRow clientTableRow) {
+        if (clientTableRow != null) {
+            sendMsgToClient(clientTableRow.getId(), message);
+        } else {
+            sendToAll(message);
+        }
+    }
+
     public void sendMsgToClient(int clientId, GenericMessage message) {
         for (ClientConnection connection : mClients.keySet()) {
 

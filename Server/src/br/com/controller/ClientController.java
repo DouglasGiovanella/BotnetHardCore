@@ -105,21 +105,21 @@ public class ClientController {
     @FXML
     private void onAttackButtonClick() {
         ClientTableRow selectedClient = clientTable.getSelectionModel().getSelectedItem();
-        if (selectedClient != null) {
-            boolean okClicked = mainApp.showClientAttackDialog(selectedClient);
-            if (okClicked) {
+        // if (selectedClient != null) {
+        mainApp.showClientAttackDialog(selectedClient);
+        // if (okClicked) {
                 //System.out.println("Atacando?");
                 //Realizar uma atividade visual para o usuario. mostrando que o cliente recebeu o comando.
                 //Mostrar a finailziacao tambem.
-            }
-        } else {
+        //  }
+        // } else {
             // Nada selecionado
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+           /* Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Nenhuma seleção");
             alert.setHeaderText("Nenhum Cliente Selecionado");
             alert.setContentText("Por favor, selecione um cliente na tabela.");
-            alert.showAndWait();
-        }
+            alert.showAndWait();*/
+        //}
     }
 
     public void updateStatus(ClientTableRow client, ClientStatusEnum status) {

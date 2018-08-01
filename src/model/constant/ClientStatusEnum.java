@@ -7,5 +7,5 @@ package model.constant;
  * Time: 21:29
  */
 public enum ClientStatusEnum {
-    STAND_BY, ATTACKING
+    STAND_BY, ATTACKING, ERROR,
 }

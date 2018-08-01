@@ -6,7 +6,5 @@ package model.constant;
  * @Date: 25/07/2018
  */
 public enum ClientMessageTypeEnum {
-
     STATUS_UPDATE, MESSAGE
-
 }

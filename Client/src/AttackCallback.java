@@ -9,4 +9,6 @@ public interface AttackCallback {
 
     void onFinish();
 
+    //void onError();
+
 }
