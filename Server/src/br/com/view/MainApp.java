@@ -14,7 +14,6 @@ import br.com.core.callback.OnServerCallback;
 import br.com.model.ClientTableRow;
 import br.com.view.notification.NotificationManager;
 import br.com.view.notification.models.NotificationType;
-import compton.AttackBuilder;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -57,13 +56,6 @@ public class MainApp extends Application implements OnServerCallback {
 
         initRootLayout();
         loadContent();
-    }
-
-    private void test2(ClientTableRow row) {
-        GenericMessage build = AttackBuilder.buildBrowserOpening()
-                .withURL("www.youtube.com.br")
-                .build();
-        mServer.sendMsgToClient(row, build);
     }
 
     public void startServer(int port) {
