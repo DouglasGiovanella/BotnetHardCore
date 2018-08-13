@@ -4,8 +4,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="450.0" prefWidth="889.0"
-            xmlns="http://javafx.com/javafx/9.0.1" fx:controller="br.com.client.server.controller.MainController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="450.0" prefWidth="889.0" xmlns="http://javafx.com/javafx/8"
+            fx:controller="br.com.client.server.controller.MainController">
     <children>
         <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="450.0" prefWidth="750.0"
                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -25,15 +25,18 @@
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="342.0" prefWidth="630.0">
                     <children>
-                        <SplitPane dividerPositions="0.7171762589928057" layoutX="356.0" layoutY="68.0"
+                        <SplitPane dividerPositions="0.5" layoutX="356.0" layoutY="68.0" orientation="VERTICAL"
                                    prefHeight="393.6" prefWidth="889.6" AnchorPane.bottomAnchor="0.0"
                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <items>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                <AnchorPane maxHeight="130.0" minHeight="0.0" minWidth="0.0" prefHeight="130.0"
+                                            prefWidth="100.0">
                                     <children>
-                                        <Label fx:id="lblStatusCommands" layoutX="153.0" layoutY="98.0"
-                                               prefHeight="194.0" prefWidth="326.0" text="Aguardando comando"
-                                               textAlignment="CENTER">
+                                        <Label fx:id="lblStatusCommands" alignment="CENTER" layoutX="23.0"
+                                               layoutY="22.0" prefHeight="130.0" prefWidth="885.0"
+                                               text="Aguardando comando" textAlignment="CENTER"
+                                               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <font>
                                                 <Font name="Lucida Bright Regular" size="30.0"/>
                                             </font>

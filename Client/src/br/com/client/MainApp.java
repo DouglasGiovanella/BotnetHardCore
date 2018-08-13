@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
@@ -18,7 +19,8 @@ import java.net.UnknownHostException;
  * Date: 01/08/2018
  * Time: 20:23
  */
-public class MainApp extends Application {
+@SuppressWarnings("Duplicates")
+public class MainApp extends Application implements ClientCallback {
 
     private Stage mPrimaryStage;
     private BorderPane mRootLayout;
@@ -43,7 +45,13 @@ public class MainApp extends Application {
 
         initRootLayout();
         loadContent();
-        startClient();
+
+        JLabel lblMessage = new JLabel("Server IP:");
+        JTextField txtPorta = new JTextField();
+        Object[] texts = {lblMessage, txtPorta};
+        JOptionPane.showMessageDialog(null, texts);
+
+        startClient(txtPorta.getText());
     }
 
     /**
@@ -81,11 +89,36 @@ public class MainApp extends Application {
         }
     }
 
-    public void startClient() {
+    private void startClient(String hostname) {
         try {
-            mClient = Client.startClient();
+            mClient = Client.startClient(hostname, this);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onCommandReceived(String command) {
+        mClientController.addCommand(command);
+    }
+
+    @Override
+    public void onConnected() {
+        mClientController.connected();
+    }
+
+    @Override
+    public void onDisconnect() {
+        mClientController.disconnect();
+    }
+
+    @Override
+    public void onAttackStarted() {
+        mClientController.attackStarted();
+    }
+
+    @Override
+    public void onAttackStopped() {
+        mClientController.attackStopped();
     }
 }

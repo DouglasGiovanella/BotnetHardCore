@@ -11,6 +11,8 @@ public interface AttackCallback {
 
     void onFinish();
 
+
+    void attackStatus(String name);
     //void onError();
 
 }

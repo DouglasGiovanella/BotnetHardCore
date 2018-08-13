@@ -5,6 +5,7 @@ import br.com.client.server.view.MainApp;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import model.constant.ClientStatusEnum;
@@ -48,6 +49,9 @@ public class ClientController {
     private Circle statusCircle;
     @FXML
     private Label clientsQuantityLabel;
+
+    @FXML
+    private AnchorPane root;
     //endregion
 
     private MainApp mainApp;
@@ -69,6 +73,9 @@ public class ClientController {
         for (TableColumn<ClientTableRow, ?> clientTableColumn : clientTable.getColumns()) {
             clientTableColumn.setStyle("-fx-alignment: CENTER;");
         }
+
+        root.setOnMouseClicked(event -> clientTable.getSelectionModel().clearSelection());
+
     }
 
     public void setMainApp(MainApp mainApp) {

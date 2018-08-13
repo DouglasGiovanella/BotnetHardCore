@@ -4,15 +4,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Circle?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="450.0" prefWidth="889.0"
-            stylesheets="@../styles/DarkTheme.css" xmlns="http://javafx.com/javafx/9.0.1"
+            stylesheets="@../styles/DarkTheme.css" xmlns="http://javafx.com/javafx/8"
             fx:controller="br.com.client.server.controller.ClientController">
     <children>
         <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="450.0" prefWidth="750.0"
                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                    AnchorPane.topAnchor="0.0">
             <items>
-                <AnchorPane maxHeight="50.0" minHeight="0.0" minWidth="0.0" prefHeight="49.0" prefWidth="598.0"
-                            styleClass="background" SplitPane.resizableWithParent="false">
+                <AnchorPane fx:id="root" maxHeight="50.0" minHeight="0.0" minWidth="0.0" prefHeight="49.0"
+                            prefWidth="598.0" styleClass="background" SplitPane.resizableWithParent="false">
                     <children>
                         <Label layoutX="90.0" layoutY="18.0" text="Porta:"/>
                         <TextField fx:id="portTextInput" layoutX="131.0" layoutY="17.0" maxHeight="25.0" maxWidth="70.0"

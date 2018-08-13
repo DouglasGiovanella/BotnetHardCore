@@ -49,8 +49,10 @@ public class DDOSAttack {
 
                     conn.connect();
                     System.out.println("Ataque frenetico nº" + i + " -> status: " + conn.getResponseCode());
+                    callback.attackStatus("Ataque frenetico nº" + i + " -> status: " + conn.getResponseCode());
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
+                    callback.attackStatus(e.getMessage());
                 }
                 i++;
             }
