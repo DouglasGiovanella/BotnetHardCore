@@ -1,0 +1,10 @@
+package br.com.client.server.view.notification.models;
+
+public enum NotificationType {
+    INFORMATION,
+    NOTICE,
+    SUCCESS,
+    WARNING,
+    ERROR,
+    CUSTOM
+}

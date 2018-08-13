@@ -1,1 +1,1 @@
-java -jar Client.jar
+java -jar br.com.client.Client.jar
