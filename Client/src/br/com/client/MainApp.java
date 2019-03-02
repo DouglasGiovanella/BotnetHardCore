@@ -1,6 +1,6 @@
 package br.com.client;
 
-import br.com.client.server.controller.MainController;
+import br.com.client.controller.MainController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -47,7 +47,7 @@ public class MainApp extends Application implements ClientCallback {
         loadContent();
 
         JLabel lblMessage = new JLabel("Server IP:");
-        JTextField txtPorta = new JTextField();
+        JTextField txtPorta = new JTextField("http://192.168.1.101");
         Object[] texts = {lblMessage, txtPorta};
         JOptionPane.showMessageDialog(null, texts);
 
@@ -61,7 +61,7 @@ public class MainApp extends Application implements ClientCallback {
         try {
             // Carrega o root layout do arquivo fxml.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("./server/view/resource/MainView.fxml"));
+            loader.setLocation(MainApp.class.getResource("MainView.fxml"));
             mRootLayout = loader.load();
 
             // Mostra a scene (cena) contendo o root layout.
@@ -76,7 +76,7 @@ public class MainApp extends Application implements ClientCallback {
     private void loadContent() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(Client.class.getResource("./server/view/resource/ContentView.fxml"));
+            loader.setLocation(Client.class.getResource("ContentView.fxml"));
             AnchorPane personOverview = loader.load();
 
             // Define o person overview dentro do root layout.
