@@ -1,6 +1,6 @@
 # BotnetHardCore
 
-Botnet criado para a disciplina de Redes de Computadores (2016) e apresentado no estande de Engenharia de Software da Univille durante a Semana da Comunidade - 2018
+Botnet criado para a disciplina de Redes de Computadores (2017) e apresentado no estande de Engenharia de Software da Univille durante a Semana da Comunidade - 2018
 
 ## Desenvolvido por:
 
@@ -9,6 +9,8 @@ Botnet criado para a disciplina de Redes de Computadores (2016) e apresentado no
 
 ## Info
 
-Universidade da Região de Joinville
+Engenharia de Software
 
-Engenharia de Software (3º ano, 2016)
+Redes de computadores (3º ano, 2017)
+
+Universidade da Região de Joinville - Univille
